@@ -20,7 +20,7 @@ namespace HR.LeaveManagement.Application.Features.LeaveTypes.Handlers.Commands
 
         public async Task<int> Handle(CreateLeaveTypeCommand request, CancellationToken cancellationToken)
         {
-            var mappedLeaveType = _mapper.Map<LeaveTypeDto, LeaveType>(request.LeaveTypeDto);
+            var mappedLeaveType = _mapper.Map<CreateLeaveTypeDto, LeaveType>(request.CreateLeaveTypeDto);
             mappedLeaveType = await _leaveTypeRepository.Add(mappedLeaveType);
             return mappedLeaveType.Id;
         }
