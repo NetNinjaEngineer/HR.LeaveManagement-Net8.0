@@ -1,8 +1,6 @@
-﻿using HR.LeaveManagement.Application.DTOs.Common;
-
-namespace HR.LeaveManagement.Application.DTOs.LeaveRequest
+﻿namespace HR.LeaveManagement.Application.DTOs.LeaveRequest
 {
-    public class CreateLeaveRequestDto : BaseDto, ILeaveRequestDto
+    public interface ILeaveRequestDto
     {
         public DateTime StartDate { get; set; }
 

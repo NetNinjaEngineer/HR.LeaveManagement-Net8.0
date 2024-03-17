@@ -1,6 +1,6 @@
 ﻿namespace HR.LeaveManagement.Application.DTOs.LeaveType
 {
-    internal interface ILeaveTypeDto
+    public interface ILeaveTypeDto
     {
         public string? Name { get; set; }
 
