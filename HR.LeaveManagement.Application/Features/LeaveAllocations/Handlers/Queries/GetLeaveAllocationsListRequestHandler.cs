@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using HR.LeaveManagement.Application.Contracts.Persistence;
-using HR.LeaveManagement.Application.Dtos;
+using HR.LeaveManagement.Application.Dtos.LeaveAllocation;
 using HR.LeaveManagement.Application.Features.LeaveAllocations.Requests.Queries;
 using HR.LeaveManagement.Domain;
 using MediatR;
@@ -20,8 +20,8 @@ namespace HR.LeaveManagement.Application.Features.LeaveAllocations.Handlers.Quer
 
         public async Task<List<LeaveAllocationDto>> Handle(GetLeaveAllocationsListRequest request, CancellationToken cancellationToken)
         {
-            IReadOnlyList<LeaveAllocation>? leaveAllocations = await _leaveAllocationRepository.GetAll();
-            return _mapper.Map<IReadOnlyList<LeaveAllocation>, List<LeaveAllocationDto>>(leaveAllocations);
+            List<LeaveAllocation>? leaveAllocations = await _leaveAllocationRepository.GetLeaveAllocationsWithDetails();
+            return _mapper.Map<List<LeaveAllocation>, List<LeaveAllocationDto>>(leaveAllocations);
         }
     }
 }
