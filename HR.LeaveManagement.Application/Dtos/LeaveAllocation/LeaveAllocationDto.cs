@@ -1,7 +1,7 @@
-﻿using HR.LeaveManagement.Application.Dtos.Common;
-using HR.LeaveManagement.Application.Dtos.LeaveType;
+﻿using HR.LeaveManagement.Application.DTOs.Common;
+using HR.LeaveManagement.Application.DTOs.LeaveType;
 
-namespace HR.LeaveManagement.Application.Dtos.LeaveAllocation
+namespace HR.LeaveManagement.Application.DTOs.LeaveAllocation
 {
     public class LeaveAllocationDto : BaseDto
     {

@@ -1,4 +1,4 @@
-﻿namespace HR.LeaveManagement.Application.Dtos.Common
+﻿namespace HR.LeaveManagement.Application.DTOs.Common
 {
     public abstract class BaseDto
     {

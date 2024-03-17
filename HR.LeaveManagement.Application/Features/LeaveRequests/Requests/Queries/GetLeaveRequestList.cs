@@ -1,4 +1,4 @@
-﻿using HR.LeaveManagement.Application.Dtos.LeaveRequest;
+﻿using HR.LeaveManagement.Application.DTOs.LeaveRequest;
 using MediatR;
 
 namespace HR.LeaveManagement.Application.Features.LeaveRequests.Requests.Queries
