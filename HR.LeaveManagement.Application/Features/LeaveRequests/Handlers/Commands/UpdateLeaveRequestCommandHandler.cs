@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
 using HR.LeaveManagement.Application.Contracts.Persistence;
+using HR.LeaveManagement.Application.DTOs.LeaveRequest.Validators;
+using HR.LeaveManagement.Application.Exceptions;
 using HR.LeaveManagement.Application.Features.LeaveRequests.Requests.Commands;
 using MediatR;
 
@@ -9,16 +11,26 @@ namespace HR.LeaveManagement.Application.Features.LeaveRequests.Handlers.Command
     {
         private readonly IMapper _mapper;
         private readonly ILeaveRequestRepository _leaveRequestRepository;
+        private readonly ILeaveTypeRepository _leaveTypeRepository;
 
-        public UpdateLeaveRequestCommandHandler(IMapper mapper, ILeaveRequestRepository leaveRequestRepository)
+        public UpdateLeaveRequestCommandHandler(IMapper mapper, ILeaveRequestRepository leaveRequestRepository, ILeaveTypeRepository leaveTypeRepository)
         {
             _mapper = mapper;
             _leaveRequestRepository = leaveRequestRepository;
+            _leaveTypeRepository = leaveTypeRepository;
         }
 
         public async Task<Unit> Handle(UpdateLeaveRequestCommand request, CancellationToken cancellationToken)
         {
+            var updateLeaveRequestValidator = new UpdateLeaveRequestDtoValidator(_leaveTypeRepository);
+            var validationResults = await updateLeaveRequestValidator.ValidateAsync(request.UpdateLeaveRequestDto);
+            if (!validationResults.IsValid)
+                throw new ValidationException(validationResults);
+
             var leaveRequest = await _leaveRequestRepository.Get(request.Id);
+
+            if (leaveRequest is null)
+                throw new NotFoundException(nameof(leaveRequest), leaveRequest!.Id);
 
             if (request.UpdateLeaveRequestDto != null)
             {
