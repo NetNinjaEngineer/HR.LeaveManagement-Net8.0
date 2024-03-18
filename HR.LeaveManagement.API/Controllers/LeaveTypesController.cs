@@ -1,0 +1,69 @@
+﻿using HR.LeaveManagement.Application.DTOs.LeaveType;
+using HR.LeaveManagement.Application.Features.LeaveTypes.Requests.Commands;
+using HR.LeaveManagement.Application.Features.LeaveTypes.Requests.Queries;
+using HR.LeaveManagement.Application.Responses;
+using HR.LeaveManagement.Application.Wrappers;
+using MediatR;
+using Microsoft.AspNetCore.Mvc;
+
+namespace HR.LeaveManagement.API.Controllers
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    public class LeaveTypesController : ControllerBase
+    {
+        private readonly IMediator _mediator;
+
+        public LeaveTypesController(IMediator mediator) => _mediator = mediator;
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<LeaveTypeDto>> GetLeaveTypeWithDetailsAsync(int id)
+        {
+            try
+            {
+                var leaveTypeWithDetails = await _mediator.Send(new GetLeaveTypeDetailRequest { Id = id });
+                return Ok(leaveTypeWithDetails);
+            }
+            catch (Exception ex)
+            {
+                return NotFound(new Response<LeaveTypeDto>(ex.Message));
+            }
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<CreateCommandResponse>> CreateLeaveTypeAsync([FromBody] CreateLeaveTypeDto createLeaveTypeDto)
+        {
+            var createLeaveTypeDtoCommand = new CreateLeaveTypeCommand() { CreateLeaveTypeDto = createLeaveTypeDto };
+            var response = await _mediator.Send(createLeaveTypeDtoCommand);
+            return response.Succeeded ? Ok(response) : BadRequest(response);
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<List<LeaveTypeDto>>> GetLeaveTypesWithDetailsAsync()
+        {
+            try
+            {
+                var leaveTypesWithDetails = await _mediator.Send(new GetLeaveTypeListRequest());
+                return Ok(leaveTypesWithDetails);
+            }
+            catch (Exception ex)
+            {
+                return NotFound(new Response<List<LeaveTypeDto>>(ex.Message));
+            }
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<DeleteCommandResponse>> DeleteLeaveTypeAsync(int id)
+        {
+            var response = await _mediator.Send(new DeleteLeaveTypeCommand { Id = id });
+            return response.StatusCode == 404 ? NotFound(response) : Ok(response);
+        }
+
+        [HttpPut("id")]
+        public async Task<ActionResult<UpdateCommandResponse>> UpdateLeaveTypeAsync(int id, [FromBody] UpdateLeaveTypeDto leaveTypeDto)
+        {
+            var response = await _mediator.Send(new UpdateLeaveTypeCommand() { LeaveTypeDto = leaveTypeDto, Id = id });
+            return response.Succeeded ? Ok(response) : BadRequest(response);
+        }
+    }
+}
