@@ -2,6 +2,7 @@
 using HR.LeaveManagement.Application.Features.LeaveRequests.Requests.Commands;
 using HR.LeaveManagement.Application.Features.LeaveRequests.Requests.Queries;
 using HR.LeaveManagement.Application.Responses;
+using HR.LeaveManagement.Application.Wrappers;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,32 +12,33 @@ namespace HR.LeaveManagement.API.Controllers
     [ApiController]
     public class LeaveRequestsController : ControllerBase
     {
-        private readonly IMediator mediator;
+        private readonly IMediator _mediator;
 
         public LeaveRequestsController(IMediator mediator)
         {
-            this.mediator = mediator;
+            _mediator = mediator;
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<LeaveRequestDto>> Get(int id)
         {
-            var leaveRequests = await mediator.Send(new GetLeaveRequestDetail() { Id = id });
+            var leaveRequests = await _mediator.Send(new GetLeaveRequestDetail() { Id = id });
             return Ok(leaveRequests);
         }
 
         [HttpGet]
         public async Task<ActionResult<List<LeaveRequestListDto>>> Get()
         {
-            var leaveRequests = await mediator.Send(new GetLeaveRequestList());
+            var leaveRequests = await _mediator.Send(new GetLeaveRequestList());
             return Ok(leaveRequests);
         }
 
         [HttpPost]
+        [ServiceFilter(typeof(LeaveRequestCreateValidationsFilter))]
         public async Task<ActionResult<CreateCommandResponse>> Post([FromBody] CreateLeaveRequestDto leaveRequest)
         {
             var command = new CreateLeaveRequestCommand { CreateLeaveRequestDto = leaveRequest };
-            var response = await mediator.Send(command);
+            var response = await _mediator.Send(command);
             return Ok(response);
         }
 
@@ -44,7 +46,7 @@ namespace HR.LeaveManagement.API.Controllers
         public async Task<ActionResult> Put(int id, [FromBody] UpdateLeaveRequestDto leaveRequest)
         {
             var command = new UpdateLeaveRequestCommand { Id = id, UpdateLeaveRequestDto = leaveRequest };
-            await mediator.Send(command);
+            await _mediator.Send(command);
             return NoContent();
         }
 
@@ -52,16 +54,23 @@ namespace HR.LeaveManagement.API.Controllers
         public async Task<ActionResult> ChangeApproval(int id, [FromBody] ChangeLeaveRequestApprovalDto changeLeaveRequestApprovalDto)
         {
             var command = new UpdateLeaveRequestCommand { Id = id, ChangeLeaveRequestApprovalDto = changeLeaveRequestApprovalDto };
-            await mediator.Send(command);
+            await _mediator.Send(command);
             return NoContent();
         }
 
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(int id)
         {
-            var command = new DeleteLeaveRequestCommand { Id = id };
-            await mediator.Send(command);
-            return NoContent();
+            try
+            {
+                var command = new DeleteLeaveRequestCommand { Id = id };
+                await _mediator.Send(command);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return NotFound(new Response<Unit>(ex.Message));
+            }
         }
     }
 }

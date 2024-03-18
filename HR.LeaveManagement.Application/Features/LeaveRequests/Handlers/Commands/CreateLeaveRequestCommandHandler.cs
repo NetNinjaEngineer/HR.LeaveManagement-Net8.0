@@ -28,13 +28,21 @@ namespace HR.LeaveManagement.Application.Features.LeaveRequests.Handlers.Command
         public async Task<CreateCommandResponse> Handle(CreateLeaveRequestCommand request, CancellationToken cancellationToken)
         {
             var createCommandResponse = new CreateCommandResponse();
-            var createLeaveTypeValidator = new CreateLeaveRequestDtoValidator(_leaveTypeRepository);
+            var createLeaveTypeValidator = new CreateLeaveRequestDtoValidator();
             var validationResults = await createLeaveTypeValidator.ValidateAsync(request.CreateLeaveRequestDto);
             if (!validationResults.IsValid)
             {
                 createCommandResponse.Succeeded = false;
                 createCommandResponse.Message = "Creation Faild";
                 createCommandResponse.Errors = validationResults.Errors.Select(e => e.ErrorMessage).ToList();
+                return createCommandResponse;
+            }
+
+            var leaveTypeIdValid = await _leaveTypeRepository.Exists(request.CreateLeaveRequestDto.LeaveTypeId);
+            if (!leaveTypeIdValid)
+            {
+                createCommandResponse.Succeeded = false;
+                createCommandResponse.Message = $"There is no leaveType with id ({request.CreateLeaveRequestDto.LeaveTypeId})";
                 return createCommandResponse;
             }
 

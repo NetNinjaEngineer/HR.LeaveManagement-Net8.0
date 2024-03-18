@@ -25,7 +25,7 @@ namespace HR.LeaveManagement.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] CreateLeaveAllocationDto leaveAllocation)
+        public async Task<ActionResult<int>> Post([FromBody] CreateLeaveAllocationDto leaveAllocation)
         {
             var command = new CreateLeaveAllocationCommand { CreateLeaveAllocationDto = leaveAllocation };
             var response = await _mediator.Send(command);
@@ -33,14 +33,14 @@ namespace HR.LeaveManagement.API.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get()
+        public async Task<ActionResult<LeaveAllocationDto>> Get()
         {
             var response = await _mediator.Send(new GetLeaveAllocationsListRequest());
             return Ok(response);
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, UpdateLeaveAllocationDto leaveAllocation)
+        public async Task<ActionResult> Put(int id, UpdateLeaveAllocationDto leaveAllocation)
         {
             var command = new UpdateLeaveAllocationCommand { UpdateLeaveAllocationDto = leaveAllocation };
             var response = await _mediator.Send(command);
@@ -48,7 +48,7 @@ namespace HR.LeaveManagement.API.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<ActionResult> Delete(int id)
         {
             var command = new DeleteLeaveAllocationCommand { Id = id };
             var response = await _mediator.Send(command);

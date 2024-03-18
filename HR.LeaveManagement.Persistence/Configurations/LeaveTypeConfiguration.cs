@@ -8,7 +8,19 @@ namespace HR.LeaveManagement.Persistence.Configurations
     {
         public void Configure(EntityTypeBuilder<LeaveType> builder)
         {
-
+            builder.HasData(
+                new LeaveType
+                {
+                    Id = 1,
+                    DefaultDays = 10,
+                    Name = "Vacation"
+                },
+                new LeaveType
+                {
+                    Id = 2,
+                    DefaultDays = 12,
+                    Name = "Sick"
+                });
         }
     }
 }
