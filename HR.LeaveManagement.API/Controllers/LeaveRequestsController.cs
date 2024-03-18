@@ -1,0 +1,67 @@
+﻿using HR.LeaveManagement.Application.DTOs.LeaveRequest;
+using HR.LeaveManagement.Application.Features.LeaveRequests.Requests.Commands;
+using HR.LeaveManagement.Application.Features.LeaveRequests.Requests.Queries;
+using HR.LeaveManagement.Application.Responses;
+using MediatR;
+using Microsoft.AspNetCore.Mvc;
+
+namespace HR.LeaveManagement.API.Controllers
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    public class LeaveRequestsController : ControllerBase
+    {
+        private readonly IMediator mediator;
+
+        public LeaveRequestsController(IMediator mediator)
+        {
+            this.mediator = mediator;
+        }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<LeaveRequestDto>> Get(int id)
+        {
+            var leaveRequests = await mediator.Send(new GetLeaveRequestDetail() { Id = id });
+            return Ok(leaveRequests);
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<List<LeaveRequestListDto>>> Get()
+        {
+            var leaveRequests = await mediator.Send(new GetLeaveRequestList());
+            return Ok(leaveRequests);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<CreateCommandResponse>> Post([FromBody] CreateLeaveRequestDto leaveRequest)
+        {
+            var command = new CreateLeaveRequestCommand { CreateLeaveRequestDto = leaveRequest };
+            var response = await mediator.Send(command);
+            return Ok(response);
+        }
+
+        [HttpPut("{id}")]
+        public async Task<ActionResult> Put(int id, [FromBody] UpdateLeaveRequestDto leaveRequest)
+        {
+            var command = new UpdateLeaveRequestCommand { Id = id, UpdateLeaveRequestDto = leaveRequest };
+            await mediator.Send(command);
+            return NoContent();
+        }
+
+        [HttpPut("changeApproval/{id}")]
+        public async Task<ActionResult> ChangeApproval(int id, [FromBody] ChangeLeaveRequestApprovalDto changeLeaveRequestApprovalDto)
+        {
+            var command = new UpdateLeaveRequestCommand { Id = id, ChangeLeaveRequestApprovalDto = changeLeaveRequestApprovalDto };
+            await mediator.Send(command);
+            return NoContent();
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> Delete(int id)
+        {
+            var command = new DeleteLeaveRequestCommand { Id = id };
+            await mediator.Send(command);
+            return NoContent();
+        }
+    }
+}
