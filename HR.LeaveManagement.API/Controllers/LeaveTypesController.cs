@@ -18,7 +18,6 @@ namespace HR.LeaveManagement.API.Controllers
         public LeaveTypesController(IMediator mediator) => _mediator = mediator;
 
         [HttpGet("{id}")]
-        [ServiceFilter(typeof(LeaveTypeExistsFilter))]
         [ProducesResponseType(typeof(LeaveTypeDto), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(Response<LeaveTypeDto>), StatusCodes.Status404NotFound)]
         public async Task<ActionResult<LeaveTypeDto>> GetLeaveTypeWithDetailsAsync(int id)

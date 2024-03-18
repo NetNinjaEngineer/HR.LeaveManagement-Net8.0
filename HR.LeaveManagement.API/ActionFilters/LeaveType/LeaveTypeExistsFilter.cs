@@ -1,28 +1,31 @@
-﻿using HR.LeaveManagement.Application.Features.LeaveTypes.Requests.Queries;
-using MediatR;
+﻿using HR.LeaveManagement.Application.Contracts.Persistence;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace HR.LeaveManagement.API.ActionFilters.LeaveType
 {
-    public class LeaveTypeExistsFilter : IActionFilter
+    public class LeaveTypeExistsFilter : IAsyncActionFilter
     {
-        private readonly IMediator _mediator;
+        private readonly ILeaveTypeRepository leaveTypeRepository;
 
-        public LeaveTypeExistsFilter(IMediator mediator)
+        public LeaveTypeExistsFilter(ILeaveTypeRepository leaveTypeRepository)
         {
-            _mediator = mediator;
+            this.leaveTypeRepository = leaveTypeRepository;
         }
 
-        public void OnActionExecuted(ActionExecutedContext context) { }
-
-        public void OnActionExecuting(ActionExecutingContext context)
+        public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
-            var leaveTypeId = (int)context.ActionArguments["id"]!;
-            var getLeaveTypeDetailRequest = new GetLeaveTypeDetailRequest() { Id = leaveTypeId };
-            var leaveType = _mediator.Send(getLeaveTypeDetailRequest);
-            if (leaveType == null)
-                context.Result = new NotFoundResult();
+            if (context.ActionArguments.TryGetValue("id", out object? idObj) && idObj is int id)
+            {
+                var leaveType = await leaveTypeRepository.Get(id);
+                if (leaveType == null)
+                {
+                    context.Result = new NotFoundResult();
+                    return;
+                }
+            }
+
+            await next();
         }
     }
 }
