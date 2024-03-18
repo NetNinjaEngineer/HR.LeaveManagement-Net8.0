@@ -1,4 +1,5 @@
-﻿using HR.LeaveManagement.Application.DTOs.LeaveType;
+﻿using HR.LeaveManagement.API.ActionFilters.LeaveType;
+using HR.LeaveManagement.Application.DTOs.LeaveType;
 using HR.LeaveManagement.Application.Features.LeaveTypes.Requests.Commands;
 using HR.LeaveManagement.Application.Features.LeaveTypes.Requests.Queries;
 using HR.LeaveManagement.Application.Responses;
@@ -17,6 +18,9 @@ namespace HR.LeaveManagement.API.Controllers
         public LeaveTypesController(IMediator mediator) => _mediator = mediator;
 
         [HttpGet("{id}")]
+        [ServiceFilter(typeof(LeaveTypeExistsFilter))]
+        [ProducesResponseType(typeof(LeaveTypeDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Response<LeaveTypeDto>), StatusCodes.Status404NotFound)]
         public async Task<ActionResult<LeaveTypeDto>> GetLeaveTypeWithDetailsAsync(int id)
         {
             try
@@ -31,14 +35,19 @@ namespace HR.LeaveManagement.API.Controllers
         }
 
         [HttpPost]
+        [ServiceFilter(typeof(LeaveTypeCreateValidationsFilter))]
+        [ProducesResponseType(typeof(CreateCommandResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(CreateCommandResponse), StatusCodes.Status422UnprocessableEntity)]
         public async Task<ActionResult<CreateCommandResponse>> CreateLeaveTypeAsync([FromBody] CreateLeaveTypeDto createLeaveTypeDto)
         {
             var createLeaveTypeDtoCommand = new CreateLeaveTypeCommand() { CreateLeaveTypeDto = createLeaveTypeDto };
             var response = await _mediator.Send(createLeaveTypeDtoCommand);
-            return response.Succeeded ? Ok(response) : BadRequest(response);
+            return response.Succeeded ? Ok(response) : StatusCode(StatusCodes.Status422UnprocessableEntity, response);
         }
 
         [HttpGet]
+        [ProducesResponseType(typeof(List<LeaveTypeDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(List<LeaveTypeDto>), StatusCodes.Status404NotFound)]
         public async Task<ActionResult<List<LeaveTypeDto>>> GetLeaveTypesWithDetailsAsync()
         {
             try
@@ -53,6 +62,9 @@ namespace HR.LeaveManagement.API.Controllers
         }
 
         [HttpDelete("{id}")]
+        [ServiceFilter(typeof(LeaveTypeExistsFilter))]
+        [ProducesResponseType(typeof(DeleteCommandResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(DeleteCommandResponse), StatusCodes.Status404NotFound)]
         public async Task<ActionResult<DeleteCommandResponse>> DeleteLeaveTypeAsync(int id)
         {
             var response = await _mediator.Send(new DeleteLeaveTypeCommand { Id = id });
@@ -60,6 +72,8 @@ namespace HR.LeaveManagement.API.Controllers
         }
 
         [HttpPut("id")]
+        [ServiceFilter(typeof(LeaveTypeExistsFilter))]
+        [ProducesResponseType(typeof(UpdateCommandResponse), StatusCodes.Status200OK)]
         public async Task<ActionResult<UpdateCommandResponse>> UpdateLeaveTypeAsync(int id, [FromBody] UpdateLeaveTypeDto leaveTypeDto)
         {
             var response = await _mediator.Send(new UpdateLeaveTypeCommand() { LeaveTypeDto = leaveTypeDto, Id = id });
