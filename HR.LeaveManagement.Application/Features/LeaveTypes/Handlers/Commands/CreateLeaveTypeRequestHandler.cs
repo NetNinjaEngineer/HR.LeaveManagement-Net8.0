@@ -40,6 +40,7 @@ namespace HR.LeaveManagement.Application.Features.LeaveTypes.Handlers.Commands
             mappedLeaveType = await _leaveTypeRepository.Add(mappedLeaveType);
 
             createCommandResponse.Message = $"Created Successfully with id ({mappedLeaveType.Id})";
+            createCommandResponse.Id = mappedLeaveType.Id;
 
             return createCommandResponse;
         }

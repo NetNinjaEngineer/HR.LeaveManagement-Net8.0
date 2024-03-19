@@ -15,7 +15,10 @@ namespace HR.LeaveManagement.API.ActionFilters.LeaveType
             var createLeaveTypeDtoValidator = new CreateLeaveTypeDtoValidator();
             var validationResults = createLeaveTypeDtoValidator.Validate(leaveType);
             if (!validationResults.IsValid)
-                context.Result = new UnprocessableEntityResult();
+            {
+                var validationErrors = validationResults.Errors.Select(e => e.ErrorMessage);
+                context.Result = new UnprocessableEntityObjectResult(validationErrors);
+            }
         }
     }
 }

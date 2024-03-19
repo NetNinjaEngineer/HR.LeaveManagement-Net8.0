@@ -8,8 +8,8 @@ namespace HR.LeaveManagement.MVC
     {
         public MappingProfile()
         {
-            CreateMap<CreateLeaveTypeDto, CreateLeaveTypeVM>();
-            CreateMap<LeaveTypeDto, LeaveTypeVM>();
+            CreateMap<CreateLeaveTypeDto, CreateLeaveTypeVM>().ReverseMap();
+            CreateMap<LeaveTypeDto, LeaveTypeVM>().ReverseMap();
         }
     }
 }

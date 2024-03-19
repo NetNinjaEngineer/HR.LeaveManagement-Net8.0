@@ -1,0 +1,30 @@
+﻿@model CreateLeaveTypeVM
+@{
+    ViewData["Title"] = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div asp-validation-summary="All" class="text-danger"></div>
+
+<h1>Create Leave Type</h1>
+<form asp-action="Create">
+    <div>
+        <label class="col-form-label" asp-for="Name"></label>
+        <input asp-for="Name" placeholder="Name" class="form-control"/>
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+    <br />
+    <div>
+        <label class="col-form-label" asp-for="DefaultDays"></label>
+        <input asp-for="DefaultDays" placeholder="Default Days" class="form-control" />
+        <span asp-validation-for="DefaultDays" class="text-danger"></span>
+    </div>
+    <br />
+    <input type="submit" value="Create" class="btn btn-primary"/> | 
+    <a asp-action="Index" class="btn btn-light">Back To List</a>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+

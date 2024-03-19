@@ -4,6 +4,7 @@ using HR.LeaveManagement.Infrastructure;
 using HR.LeaveManagement.Persistence;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,10 +13,14 @@ var configuration = builder.Configuration;
 
 services.AddControllers(options =>
 {
-    options.ReturnHttpNotAcceptable = true;
     options.Filters.Add(new ProducesResponseTypeAttribute(StatusCodes.Status400BadRequest));
+
     options.Filters.Add(new ProducesResponseTypeAttribute(StatusCodes.Status406NotAcceptable));
+
     options.Filters.Add(new ProducesResponseTypeAttribute(StatusCodes.Status500InternalServerError));
+
+    options.OutputFormatters.RemoveType<StringOutputFormatter>();
+
 })
     .ConfigureApiBehaviorOptions(setupAction =>
     {

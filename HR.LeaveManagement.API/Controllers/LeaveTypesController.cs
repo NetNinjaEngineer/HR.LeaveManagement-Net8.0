@@ -1,5 +1,4 @@
-﻿using HR.LeaveManagement.API.ActionFilters.LeaveType;
-using HR.LeaveManagement.Application.DTOs.LeaveType;
+﻿using HR.LeaveManagement.Application.DTOs.LeaveType;
 using HR.LeaveManagement.Application.Features.LeaveTypes.Requests.Commands;
 using HR.LeaveManagement.Application.Features.LeaveTypes.Requests.Queries;
 using HR.LeaveManagement.Application.Responses;
@@ -34,14 +33,13 @@ namespace HR.LeaveManagement.API.Controllers
         }
 
         [HttpPost]
-        [ServiceFilter(typeof(LeaveTypeCreateValidationsFilter))]
         [ProducesResponseType(typeof(CreateCommandResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(CreateCommandResponse), StatusCodes.Status422UnprocessableEntity)]
         public async Task<ActionResult<CreateCommandResponse>> CreateLeaveTypeAsync([FromBody] CreateLeaveTypeDto createLeaveTypeDto)
         {
             var createLeaveTypeDtoCommand = new CreateLeaveTypeCommand() { CreateLeaveTypeDto = createLeaveTypeDto };
             var response = await _mediator.Send(createLeaveTypeDtoCommand);
-            return response.Succeeded ? Ok(response) : StatusCode(StatusCodes.Status422UnprocessableEntity, response);
+            return response;
         }
 
         [HttpGet]
@@ -61,22 +59,21 @@ namespace HR.LeaveManagement.API.Controllers
         }
 
         [HttpDelete("{id}")]
-        [ServiceFilter(typeof(LeaveTypeExistsFilter))]
         [ProducesResponseType(typeof(DeleteCommandResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(DeleteCommandResponse), StatusCodes.Status404NotFound)]
         public async Task<ActionResult<DeleteCommandResponse>> DeleteLeaveTypeAsync(int id)
         {
             var response = await _mediator.Send(new DeleteLeaveTypeCommand { Id = id });
-            return response.StatusCode == 404 ? NotFound(response) : Ok(response);
+            return response;
         }
 
         [HttpPut("id")]
-        [ServiceFilter(typeof(LeaveTypeExistsFilter))]
         [ProducesResponseType(typeof(UpdateCommandResponse), StatusCodes.Status200OK)]
         public async Task<ActionResult<UpdateCommandResponse>> UpdateLeaveTypeAsync(int id, [FromBody] UpdateLeaveTypeDto leaveTypeDto)
         {
-            var response = await _mediator.Send(new UpdateLeaveTypeCommand() { LeaveTypeDto = leaveTypeDto, Id = id });
-            return response.Succeeded ? Ok(response) : BadRequest(response);
+            var response = await _mediator.Send(
+                new UpdateLeaveTypeCommand() { LeaveTypeDto = leaveTypeDto, Id = id });
+            return response;
         }
     }
 }

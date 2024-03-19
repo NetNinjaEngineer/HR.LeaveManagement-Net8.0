@@ -20,7 +20,7 @@ namespace HR.LeaveManagement.API.ActionFilters.LeaveType
                 var leaveType = await leaveTypeRepository.Get(id);
                 if (leaveType == null)
                 {
-                    context.Result = new NotFoundResult();
+                    context.Result = new NotFoundObjectResult("The Leave Type Requested is not found .");
                     return;
                 }
             }
