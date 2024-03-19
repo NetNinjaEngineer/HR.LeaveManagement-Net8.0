@@ -1,12 +1,13 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
+
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
 
 namespace HR.LeaveManagement.Identity.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialMigration : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -156,6 +157,34 @@ namespace HR.LeaveManagement.Identity.Migrations
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.InsertData(
+                table: "AspNetRoles",
+                columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
+                values: new object[,]
+                {
+                    { "2fa24f36-8a41-433b-9683-a145c6a835ef", null, "User", "USER" },
+                    { "a0a0eca2-d6e0-47f7-872d-755f3e2e05c0", null, "Employee", "EMPLOYEE" },
+                    { "bc392fb9-112b-481a-b762-7c3f2471c975", null, "Adminstrator", "ADMINSTRATOR" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "AspNetUsers",
+                columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "FirstName", "LastName", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
+                values: new object[,]
+                {
+                    { "8e445865-a24d-4543-a6c6-9443d048cdb9", 0, "01ff4937-310f-4a06-badd-9399d0028354", "admin@localhost.com", true, "System", "Admin", false, null, "ADMIN@LOCALHOST.COM", "ADMIN@LOCALHOST.COM", "AQAAAAIAAYagAAAAEFaHisqr/LeBMZKGSrFueXy7cWR8LwL7UYwsB/AxEDx+KB9+CZqSVWdBJTV31gpOWQ==", null, false, "deff1d32-4127-45df-b66c-6a42f70b23d6", false, "admin@localhost.com" },
+                    { "9e224968-33e4-4652-b7b7-8574d048cdb9", 0, "0a81c529-1199-40a9-b8b6-ced71dd0643f", "user@localhost.com", true, "System", "User", false, null, "USER@LOCALHOST.COM", "USER@LOCALHOST.COM", "AQAAAAIAAYagAAAAEPLb2Ozo+rWUMNGTqSPHARdf2dzWy43ViHrrmEDlBC1o7F7wbr4d7Jfk7HdLrOv+pw==", null, false, "c1681cff-09c8-4d8b-a9f6-1685db2c89e7", false, "user@localhost.com" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "AspNetUserRoles",
+                columns: new[] { "RoleId", "UserId" },
+                values: new object[,]
+                {
+                    { "bc392fb9-112b-481a-b762-7c3f2471c975", "8e445865-a24d-4543-a6c6-9443d048cdb9" },
+                    { "a0a0eca2-d6e0-47f7-872d-755f3e2e05c0", "9e224968-33e4-4652-b7b7-8574d048cdb9" }
                 });
 
             migrationBuilder.CreateIndex(
