@@ -25,9 +25,22 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="LeaveTypes" asp-action="Index">LeaveTypes</a>
-                        </li>
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            if (User.IsInRole("Adminstrator"))
+                            {
+                                <div class="dropdown">
+                                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        Manage
+                                    </button>
+                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                        <a class="dropdown-item" asp-action="Index" asp-controller="LeaveTypes">LeaveTypes</a>
+                                        <a class="dropdown-item" asp-action="Index" asp-controller="LeaveAllocations">LeaveAllocations</a>
+                                        <a class="dropdown-item" asp-action="Index" asp-controller="LeaveRequests">LeaveRequests</a>
+                                    </div>
+                                </div>
+                            }
+                        }
                     </ul>
                 </div>
             </div>

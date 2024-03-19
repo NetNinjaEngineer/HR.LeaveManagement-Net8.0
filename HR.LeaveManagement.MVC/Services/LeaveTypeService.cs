@@ -25,6 +25,8 @@ namespace HR.LeaveManagement.MVC.Services
 
                 CreateLeaveTypeDto createLeaveTypeDto = _mapper.Map<CreateLeaveTypeVM, CreateLeaveTypeDto>(model);
 
+                AddBearerToken(_localStorageService.GetStorageValue<string>("token"));
+
                 var apiResponse = await _client.LeaveTypesPOSTAsync(createLeaveTypeDto);
 
                 if (apiResponse.Succeeded)
@@ -50,6 +52,7 @@ namespace HR.LeaveManagement.MVC.Services
             try
             {
                 var response = new Response<int>();
+                AddBearerToken(_localStorageService.GetStorageValue<string>("token"));
 
                 var apiResponse = await _client.LeaveTypesDELETEAsync(id);
 
@@ -74,6 +77,7 @@ namespace HR.LeaveManagement.MVC.Services
 
         public async Task<LeaveTypeVM> GetLeaveTypeDetails(int id)
         {
+            AddBearerToken(_localStorageService.GetStorageValue<string>("token"));
             var leaveType = await _client.LeaveTypesGETAsync(id);
             var leaveTypeVM = _mapper.Map<LeaveTypeVM>(leaveType);
             return leaveTypeVM;
@@ -81,6 +85,7 @@ namespace HR.LeaveManagement.MVC.Services
 
         public async Task<List<LeaveTypeVM>> GetLeaveTypes()
         {
+            AddBearerToken(_localStorageService.GetStorageValue<string>("token"));
             var leaveTypes = await _client.LeaveTypesAllAsync();
             var leaveTypesVM = _mapper.Map<IEnumerable<LeaveTypeDto>, IEnumerable<LeaveTypeVM>>(leaveTypes);
             return leaveTypesVM.ToList();
@@ -91,6 +96,7 @@ namespace HR.LeaveManagement.MVC.Services
             try
             {
                 LeaveTypeDto leaveTypeDto = _mapper.Map<LeaveTypeDto>(model);
+                AddBearerToken(_localStorageService.GetStorageValue<string>("token"));
                 var response = await _client.IdAsync(id, new UpdateLeaveTypeDto { DefaultDays = model.DefaultDays, Name = model.Name });
                 if (response.Succeeded)
                     return new Response<int>() { Success = true, Message = response.Message, Data = response.Id };
