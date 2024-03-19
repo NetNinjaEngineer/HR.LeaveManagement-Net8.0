@@ -1,5 +1,6 @@
 using HR.LeaveManagement.API;
 using HR.LeaveManagement.Application;
+using HR.LeaveManagement.Identity;
 using HR.LeaveManagement.Infrastructure;
 using HR.LeaveManagement.Persistence;
 using Microsoft.AspNetCore.Mvc;
@@ -65,6 +66,7 @@ services.ConfigureApplicationServices();
 services.ConfigureInfrastructureServices(configuration);
 services.ConfigurePersistenceServices(configuration);
 services.ConfigureApiServices();
+services.ConfigureIdentity();
 
 var app = builder.Build();
 
