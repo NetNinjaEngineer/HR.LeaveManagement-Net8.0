@@ -5,37 +5,34 @@ namespace HR.LeaveManagement.MVC.Services.Base
 {
     public class BaseHttpService
     {
-        protected readonly IClient _client;
         protected readonly ILocalStorageService _localStorageService;
 
-        public BaseHttpService(IClient client, ILocalStorageService localStorageService)
+        protected readonly IClient _client;
+
+        public BaseHttpService(ILocalStorageService localStorageService, IClient client)
         {
-            _client = client;
             _localStorageService = localStorageService;
+            _client = client;
         }
 
-        protected Response<Guid> ConvertApiExceptions<Guid>(ApiException exception)
+        protected Response<Guid> ConvertApiExceptions<Guid>(ApiException ex)
         {
-            if (exception.StatusCode == 400)
+            if (ex.StatusCode == 400)
             {
-                return new Response<Guid> { Message = "validation errors have occured.", Success = false };
+                return new Response<Guid> { Message = "Validation errors have occured", Success = false, ValidationErrors = ex.Response };
             }
-            else if (exception.StatusCode == 404)
+            else if (ex.StatusCode == 404)
             {
-                return new Response<Guid> { Message = "The Requested Item could not be found.", Success = false };
+                return new Response<Guid> { Message = "The requested item could not be founded!.", Success = false };
             }
-            else
-            {
-                return new Response<Guid> { Message = "Something went wrong, please try again.", Success = false };
-            }
+            return new Response<Guid> { Message = "Something went wrong please try again", Success = false };
         }
 
-        protected void AddBearerToken()
+        protected void AddBearerToken(string token)
         {
-            if (_localStorageService.Exists("token"))
+            if (!_localStorageService.Exists(token))
                 _client.HttpClient.DefaultRequestHeaders.Authorization =
-                    new AuthenticationHeaderValue("Bearer",
-                    _localStorageService.GetStorageValue<string>("token"));
+                    new AuthenticationHeaderValue("Bearer", token);
         }
     }
 }

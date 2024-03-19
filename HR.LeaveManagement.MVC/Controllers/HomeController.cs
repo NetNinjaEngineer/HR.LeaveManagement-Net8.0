@@ -1,5 +1,4 @@
 using HR.LeaveManagement.MVC.Models;
-using HR.LeaveManagement.MVC.Services.Base;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
@@ -8,18 +7,15 @@ namespace HR.LeaveManagement.MVC.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-        private readonly IClient client;
 
-        public HomeController(ILogger<HomeController> logger, IClient client)
+        public HomeController(ILogger<HomeController> logger)
         {
             _logger = logger;
-            this.client = client;
         }
 
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            var leaveTypes = await this.client.LeaveTypesAllAsync();
-            return View(leaveTypes);
+            return View();
         }
 
         public IActionResult Privacy()
