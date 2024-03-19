@@ -1,4 +1,5 @@
 ﻿using HR.LeaveManagement.MVC.Models;
+using HR.LeaveManagement.MVC.Services.Base;
 
 namespace HR.LeaveManagement.MVC.Contracts
 {
@@ -8,7 +9,7 @@ namespace HR.LeaveManagement.MVC.Contracts
 
         Task<LeaveTypeVM> GetLeaveTypeDetails(int id);
 
-        Task<Response<int>> CreateLeaveType(LeaveTypeVM model);
+        Task<Response<int>> CreateLeaveType(CreateLeaveTypeVM model);
 
         Task<Response<int>> UpdateLeaveType(int id, LeaveTypeVM model);
 
