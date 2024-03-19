@@ -39,11 +39,11 @@ namespace HR.LeaveManagement.MVC.Controllers
                     if (response.Success)
                     {
                         var responseMessage = response.Message;
-                        TempData["Message"] = "LeaveType Created Successfully";
+                        TempData["Message"] = responseMessage;
                         return RedirectToAction(nameof(Index));
                     }
                     else
-                        ModelState.AddModelError(string.Empty, response.ValidationErrors ?? "Invalid Data");
+                        ModelState.AddModelError(string.Empty, response.ValidationErrors!);
                 }
                 catch (Exception ex)
                 {
@@ -54,5 +54,57 @@ namespace HR.LeaveManagement.MVC.Controllers
             return View(leaveTypeVM);
 
         }
+
+        [HttpGet]
+        public async Task<IActionResult> Details([FromRoute] int id, string viewName = "Details")
+        {
+            var leaveType = await _leaveTypeService.GetLeaveTypeDetails(id);
+            return View(viewName, leaveType);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Delete(int id)
+            => await Details(id, nameof(Delete));
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Delete([FromRoute] int id, LeaveTypeVM leaveTypeVM)
+        {
+            if (id != leaveTypeVM.Id)
+                return BadRequest();
+
+            var response = await _leaveTypeService.DeleteLeaveType(leaveTypeVM.Id);
+            if (response.Success)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+            else
+                ModelState.AddModelError(string.Empty, response.ValidationErrors!);
+            return View(leaveTypeVM);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Edit(int id)
+            => await Details(id, nameof(Edit));
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit([FromRoute] int id, LeaveTypeVM leaveTypeVM)
+        {
+            if (id != leaveTypeVM.Id)
+                return BadRequest();
+
+            var response = await _leaveTypeService.UpdateLeaveType(id, leaveTypeVM);
+
+            if (response.Success)
+                return RedirectToAction(nameof(Index));
+            else
+                ModelState.AddModelError("", response.ValidationErrors!);
+
+            return View(leaveTypeVM);
+
+        }
+
+
     }
 }

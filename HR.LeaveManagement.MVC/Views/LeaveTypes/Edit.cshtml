@@ -1,0 +1,27 @@
+﻿@model HR.LeaveManagement.MVC.Models.LeaveTypeVM
+
+@{
+    ViewData["Title"] = "Edit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div asp-validation-summary="All" class="text-danger"></div>
+
+<h1>Edit @Model.Name</h1>
+
+<h4>LeaveTypeVM</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+           <partial name="PartialViews/_CreateEditPartialView" />
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index" class="btn btn-light">Back to List</a>
+</div>

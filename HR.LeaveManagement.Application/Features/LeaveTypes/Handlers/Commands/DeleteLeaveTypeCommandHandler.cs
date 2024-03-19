@@ -31,6 +31,7 @@ namespace HR.LeaveManagement.Application.Features.LeaveTypes.Handlers.Commands
 
             await _leaveTypeRepository.Delete(leaveType);
 
+            deleteCommandResponse.Id = request.Id;
             deleteCommandResponse.Succeeded = true;
             deleteCommandResponse.Message = "Delete Successfully";
             deleteCommandResponse.StatusCode = 204;

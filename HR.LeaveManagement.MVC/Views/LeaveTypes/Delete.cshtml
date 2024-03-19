@@ -1,0 +1,19 @@
+﻿@model LeaveTypeVM
+@{
+    ViewData["Title"] = "Delete";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div asp-validation-summary="All" class="text-danger"></div>
+
+<h1>Delete</h1>
+
+<form asp-action="Delete">
+    <partial name="PartialViews/_DeleteDetailsPartialView" />
+
+    <div>
+        <input type="submit" value="Delete" class="btn btn-danger"/> |
+        <a asp-action="Index" class="btn btn-light">Back to List</a>
+    </div>
+</form>
+

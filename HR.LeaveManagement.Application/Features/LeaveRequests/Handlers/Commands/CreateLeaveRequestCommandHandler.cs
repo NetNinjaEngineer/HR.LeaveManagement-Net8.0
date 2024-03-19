@@ -68,6 +68,7 @@ namespace HR.LeaveManagement.Application.Features.LeaveRequests.Handlers.Command
 
             createCommandResponse.Message = "Created Successfully";
             createCommandResponse.Succeeded = true;
+            createCommandResponse.Id = leaveRequest.Id;
             return createCommandResponse;
         }
     }

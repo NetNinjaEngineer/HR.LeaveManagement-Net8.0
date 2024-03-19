@@ -29,6 +29,7 @@ namespace HR.LeaveManagement.MVC.Services
 
                 if (apiResponse.Succeeded)
                 {
+                    response.Data = apiResponse.Id;
                     response.Success = true;
                     response.Message = apiResponse.Message;
                 }
@@ -54,6 +55,7 @@ namespace HR.LeaveManagement.MVC.Services
 
                 if (apiResponse.Succeeded)
                 {
+                    response.Data = apiResponse.Id;
                     response.Success = true;
                     response.Message = apiResponse.Message;
                 }
@@ -89,7 +91,11 @@ namespace HR.LeaveManagement.MVC.Services
             try
             {
                 LeaveTypeDto leaveTypeDto = _mapper.Map<LeaveTypeDto>(model);
-                return new Response<int>() { Success = true };
+                var response = await _client.IdAsync(id, new UpdateLeaveTypeDto { DefaultDays = model.DefaultDays, Name = model.Name });
+                if (response.Succeeded)
+                    return new Response<int>() { Success = true, Message = response.Message, Data = response.Id };
+                else
+                    return new Response<int>() { Success = false, ValidationErrors = response.Errors.Aggregate((first, last) => $"{first}{last}") };
             }
             catch (ApiException ex)
             {

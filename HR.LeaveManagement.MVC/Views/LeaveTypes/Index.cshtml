@@ -17,11 +17,8 @@
 }
 
 
-<h1>Index</h1>
+<h1>LeaveTypes</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
 <table class="table">
     <thead>
         <tr>
@@ -44,11 +41,16 @@
                 @Html.DisplayFor(modelItem => item.DefaultDays)
             </td>
             <td>
-                @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
-                @Html.ActionLink("Details", "Details", new { id = item.Id }) |
-                @Html.ActionLink("Delete", "Delete", new { id = item.Id })
+                <a asp-action="Edit" class="btn btn-warning" asp-route-id="@item.Id">Edit</a>
+                <a asp-action="Details" class="btn btn-info" asp-route-id="@item.Id">Details</a>
+                <a asp-action="Delete" class="btn btn-danger" asp-route-id="@item.Id">Delete</a>
             </td>
         </tr>
 }
     </tbody>
 </table>
+
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Create New</a>
+</p>
