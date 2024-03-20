@@ -36,5 +36,13 @@ namespace HR.LeaveManagement.MVC.Controllers
 
             return View(loginViewModel);
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Logout()
+        {
+            await _authService.Logout();
+            return RedirectToAction(nameof(Login));
+        }
     }
 }
