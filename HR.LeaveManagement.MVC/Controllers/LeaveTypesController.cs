@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace HR.LeaveManagement.MVC.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Adminstrator")]
     public class LeaveTypesController : Controller
     {
         private readonly ILeaveTypeService _leaveTypeService;

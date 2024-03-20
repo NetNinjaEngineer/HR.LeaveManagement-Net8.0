@@ -1,5 +1,7 @@
-﻿using HR.LeaveManagement.MVC.Contracts;
+﻿using AutoMapper;
+using HR.LeaveManagement.MVC.Contracts;
 using HR.LeaveManagement.MVC.Models;
+using HR.LeaveManagement.MVC.Services.Base;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HR.LeaveManagement.MVC.Controllers
@@ -7,10 +9,12 @@ namespace HR.LeaveManagement.MVC.Controllers
     public class AccountController : Controller
     {
         private readonly IAuthService _authService;
+        private readonly IMapper _mapper;
 
-        public AccountController(IAuthService authService)
+        public AccountController(IAuthService authService, IMapper mapper)
         {
             _authService = authService;
+            _mapper = mapper;
         }
 
         [HttpGet]
@@ -36,6 +40,32 @@ namespace HR.LeaveManagement.MVC.Controllers
 
             return View(loginViewModel);
         }
+
+
+        [HttpGet]
+        public IActionResult Register()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Register(RegisterViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                RegisterModel registerModel = _mapper.Map<RegisterViewModel, RegisterModel>(model);
+                var isRegistered = await _authService.Register(registerModel);
+                if (isRegistered)
+                    return RedirectToAction("Index", "Home");
+                ModelState.AddModelError("", "Invalid Register Crediantials, please try again");
+            }
+
+            return View(model);
+        }
+
+
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]

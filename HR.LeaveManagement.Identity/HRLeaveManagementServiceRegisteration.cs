@@ -46,6 +46,8 @@ namespace HR.LeaveManagement.Identity
 
             services.AddScoped<IAuthService, AuthService>();
 
+            services.AddScoped<IEmployeeService, EmployeeService>();
+
             return services;
 
         }

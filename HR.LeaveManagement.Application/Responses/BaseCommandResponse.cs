@@ -1,6 +1,6 @@
 ﻿namespace HR.LeaveManagement.Application.Responses
 {
-    public abstract class BaseCommandResponse
+    public class BaseCommandResponse
     {
         public int Id { get; set; }
 

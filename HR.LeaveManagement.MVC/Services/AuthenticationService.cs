@@ -74,7 +74,7 @@ namespace HR.LeaveManagement.MVC.Services
             {
                 AuthModel authModelResponse = await _client.RegisterAsync(registerModel);
                 if (authModelResponse.IsAuthenticated && authModelResponse.Token != string.Empty)
-                    return true;
+                    return await Authenticate(registerModel.Email, registerModel.Password);
 
                 return false;
             }
