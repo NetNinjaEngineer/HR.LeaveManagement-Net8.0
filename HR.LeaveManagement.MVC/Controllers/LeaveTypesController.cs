@@ -1,4 +1,5 @@
-﻿using HR.LeaveManagement.MVC.Contracts;
+﻿using AutoMapper;
+using HR.LeaveManagement.MVC.Contracts;
 using HR.LeaveManagement.MVC.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -9,10 +10,12 @@ namespace HR.LeaveManagement.MVC.Controllers
     public class LeaveTypesController : Controller
     {
         private readonly ILeaveTypeService _leaveTypeService;
+        private readonly IMapper _mapper;
 
-        public LeaveTypesController(ILeaveTypeService leaveTypeService)
+        public LeaveTypesController(ILeaveTypeService leaveTypeService, IMapper mapper)
         {
             _leaveTypeService = leaveTypeService;
+            _mapper = mapper;
         }
 
 
@@ -53,7 +56,7 @@ namespace HR.LeaveManagement.MVC.Controllers
                 }
             }
 
-            return View(leaveTypeVM);
+            return View(_mapper.Map<LeaveTypeVM>(leaveTypeVM));
 
         }
 

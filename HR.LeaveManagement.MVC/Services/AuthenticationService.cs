@@ -56,8 +56,10 @@ namespace HR.LeaveManagement.MVC.Services
 
         private List<Claim> ParseClaims(JwtSecurityToken tokenContent)
         {
-            var claims = tokenContent.Claims;
-            return claims.ToList();
+            var claims = tokenContent.Claims.ToList();
+            claims.Add(new Claim(ClaimTypes.Name, tokenContent.Subject));
+            claims.Add(new Claim(ClaimTypes.Role, "roles"));
+            return claims;
         }
 
         public async Task Logout()

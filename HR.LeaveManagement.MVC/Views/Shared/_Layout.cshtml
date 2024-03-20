@@ -30,18 +30,20 @@
                             if (User.IsInRole("Adminstrator"))
                             {
                                 <div class="dropdown">
-                                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <button class="btn btn-warning dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                                         Manage
                                     </button>
-                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                        <a class="dropdown-item" asp-action="Index" asp-controller="LeaveTypes">LeaveTypes</a>
-                                        <a class="dropdown-item" asp-action="Index" asp-controller="LeaveAllocations">LeaveAllocations</a>
-                                        <a class="dropdown-item" asp-action="Index" asp-controller="LeaveRequests">LeaveRequests</a>
-                                    </div>
+                                    <ul class="dropdown-menu">
+                                        <li><a class="dropdown-item" asp-action="Index" asp-controller="LeaveTypes">LeaveTypes</a></li>
+                                        <li><a class="dropdown-item" asp-action="Index" asp-controller="LeaveAllocations">LeaveAllocations</a></li>
+                                        <li><a class="dropdown-item" asp-action="Index" asp-controller="LeaveRequests">LeaveRequests</a></li>
+                                    </ul>
                                 </div>
                             }
                         }
                     </ul>
+
+                    <partial name="_LoginPartial" />
                 </div>
             </div>
         </nav>
