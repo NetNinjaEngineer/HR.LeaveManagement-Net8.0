@@ -1,4 +1,5 @@
 using HR.LeaveManagement.API;
+using HR.LeaveManagement.API.Middlewares;
 using HR.LeaveManagement.Application;
 using HR.LeaveManagement.Identity;
 using HR.LeaveManagement.Infrastructure;
@@ -69,6 +70,8 @@ services.ConfigurePersistenceServices(configuration);
 services.ConfigureApiServices();
 services.ConfigureIdentity(builder.Configuration);
 
+builder.Services.AddTransient<GlobalExceptionHandlingMiddleware>();
+
 builder.Services.AddSwaggerGen(options =>
 {
     options.AddSecurityDefinition("HR.LeaveManagement", new OpenApiSecurityScheme()
@@ -101,6 +104,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
 
 app.UseHttpsRedirection();
 

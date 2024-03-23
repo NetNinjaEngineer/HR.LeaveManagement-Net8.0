@@ -1,6 +1,11 @@
-@HR.LeaveManagement.API_HostAddress = http://localhost:5207
+@HR.LeaveManagement.API_HostAddress = http://localhost:7276
 
 GET {{HR.LeaveManagement.API_HostAddress}}/weatherforecast/
 Accept: application/json
 
+###
+
+GET {{HR.LeaveManagement.API_HostAddress}}/api/LeaveTypes
+Accept: application/json
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZG1pbkBsb2NhbGhvc3QuY29tIiwianRpIjoiNmUxMTQyZGYtNWQ3OS00YmY5LWI5ODYtNjg4NTlhZDE4MGViIiwiZW1haWwiOiJhZG1pbkBsb2NhbGhvc3QuY29tIiwidWlkIjoiOGU0NDU4NjUtYTI0ZC00NTQzLWE2YzYtOTQ0M2QwNDhjZGI5IiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiQWRtaW5zdHJhdG9yIiwiZXhwIjoxNzExMjI3NzU2LCJpc3MiOiJodHRwczovL2xvY2FsaG9zdDo3MTQwIiwiYXVkIjoiaHR0cHM6Ly9sb2NhbGhvc3Q6NzE0MCJ9.EtZ-p3bxqXFUifafA81q1Z9NiqugJ1KeuDDwvhpL0L4
 ###

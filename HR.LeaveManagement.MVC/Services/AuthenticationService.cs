@@ -36,7 +36,7 @@ namespace HR.LeaveManagement.MVC.Services
 
                     await _contextAccessor.HttpContext!.SignInAsync(user, new AuthenticationProperties
                     {
-                        IsPersistent = true
+                        IsPersistent = false
                     });
 
                     _localStorageService.SetStorageValue("token", response.Token);

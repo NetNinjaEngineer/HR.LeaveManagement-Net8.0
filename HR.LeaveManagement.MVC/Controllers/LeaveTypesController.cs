@@ -9,13 +9,15 @@ namespace HR.LeaveManagement.MVC.Controllers
     [Authorize(Roles = "Adminstrator")]
     public class LeaveTypesController : Controller
     {
-        private readonly ILeaveTypeService _leaveTypeService;
         private readonly IMapper _mapper;
+        private readonly ILeaveTypeService _leaveTypeService;
+        private readonly ILeaveAllocationService _leaveAllocationService;
 
-        public LeaveTypesController(ILeaveTypeService leaveTypeService, IMapper mapper)
+        public LeaveTypesController(ILeaveTypeService leaveTypeService, IMapper mapper, ILeaveAllocationService leaveAllocationService)
         {
             _leaveTypeService = leaveTypeService;
             _mapper = mapper;
+            _leaveAllocationService = leaveAllocationService;
         }
 
 
@@ -34,12 +36,13 @@ namespace HR.LeaveManagement.MVC.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([FromForm] CreateLeaveTypeVM leaveTypeVM)
+        public async Task<IActionResult> Create([FromForm] LeaveTypeVM leaveTypeVM)
         {
             if (ModelState.IsValid)
             {
                 try
                 {
+                    var createLeaveTypeVM = _mapper.Map<LeaveTypeVM, CreateLeaveTypeVM>(leaveTypeVM);
                     var response = await _leaveTypeService.CreateLeaveType(leaveTypeVM);
                     if (response.Success)
                     {
@@ -56,7 +59,7 @@ namespace HR.LeaveManagement.MVC.Controllers
                 }
             }
 
-            return View(_mapper.Map<LeaveTypeVM>(leaveTypeVM));
+            return View(leaveTypeVM);
 
         }
 
@@ -110,6 +113,23 @@ namespace HR.LeaveManagement.MVC.Controllers
 
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Allocate(int id)
+        {
+            try
+            {
+                var response = await _leaveAllocationService.CreateLeaveAllocation(id);
+                if (response.Success)
+                    return RedirectToAction(nameof(Index));
+            }
+            catch(Exception ex)
+            {
+                ModelState.AddModelError("", ex.Message);
+            }
+
+            return View();
+        }
 
     }
 }

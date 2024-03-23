@@ -1,4 +1,5 @@
 ﻿using HR.LeaveManagement.MVC.Contracts;
+using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http.Headers;
 
 namespace HR.LeaveManagement.MVC.Services.Base
@@ -8,11 +9,13 @@ namespace HR.LeaveManagement.MVC.Services.Base
         protected readonly ILocalStorageService _localStorageService;
 
         protected readonly IClient _client;
+        private JwtSecurityTokenHandler JwtSecurityTokenHandler;
 
         public BaseHttpService(ILocalStorageService localStorageService, IClient client)
         {
             _localStorageService = localStorageService;
             _client = client;
+            JwtSecurityTokenHandler = new JwtSecurityTokenHandler();
         }
 
         protected Response<Guid> ConvertApiExceptions<Guid>(ApiException ex)
@@ -31,8 +34,14 @@ namespace HR.LeaveManagement.MVC.Services.Base
         protected void AddBearerToken(string token)
         {
             if (!_localStorageService.Exists(token))
+            {
+                var tokenContent = JwtSecurityTokenHandler.ReadJwtToken(token);
+
+                var validTo = tokenContent.ValidTo;
+
                 _client.HttpClient.DefaultRequestHeaders.Authorization =
                     new AuthenticationHeaderValue("Bearer", token);
+            }
         }
     }
 }
