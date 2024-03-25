@@ -7,7 +7,7 @@ using HR.LeaveManagement.Application.Features.LeaveTypes.Requests.Queries;
 using HR.LeaveManagement.Domain;
 using Moq;
 
-namespace HR.LeaveManagement.Application.Tests.Queries
+namespace HR.LeaveManagement.Application.Tests.LeaveTypes
 {
     public class GetLeaveTypeDetailRequestHandlerTests
     {
@@ -54,7 +54,7 @@ namespace HR.LeaveManagement.Application.Tests.Queries
             var leaveType = new LeaveType { Id = leaveTypeId, Name = "Vacation" };
             var leaveTypeDto = new LeaveTypeDto { Id = leaveTypeId, Name = "Vacation" };
 
-            _leaveTypeRepositoryMock.Setup(repo => repo.Get(leaveTypeId)).ReturnsAsync((LeaveType)null);
+            _leaveTypeRepositoryMock.Setup(repo => repo.Get(leaveTypeId))!.ReturnsAsync((LeaveType?)null);
 
             var request = new GetLeaveTypeDetailRequest { Id = leaveTypeId };
 

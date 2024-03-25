@@ -29,7 +29,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HR.LeaveManagement.API", "H
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HR.LeaveManagement.Identity", "HR.LeaveManagement.Identity\HR.LeaveManagement.Identity.csproj", "{EC7A0CE6-7E31-44A4-9355-AF249ACE899E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HR.LeaveManagement.Application.Tests", "HR.LeaveManagement.Application.Tests\HR.LeaveManagement.Application.Tests.csproj", "{D6FD73A3-37CD-4773-8615-1A45FE76D5DB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HR.LeaveManagement.Application.Tests", "HR.LeaveManagement.Application.Tests\HR.LeaveManagement.Application.Tests.csproj", "{D6FD73A3-37CD-4773-8615-1A45FE76D5DB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
