@@ -7,24 +7,15 @@ using Microsoft.AspNetCore.Mvc;
 namespace HR.LeaveManagement.MVC.Controllers
 {
     [Authorize(Roles = "Adminstrator")]
-    public class LeaveTypesController : Controller
+    public class LeaveTypesController(
+        ILeaveTypeService leaveTypeService,
+        ILeaveAllocationService leaveAllocationService,
+        IMapper mapper) : Controller
     {
-        private readonly IMapper _mapper;
-        private readonly ILeaveTypeService _leaveTypeService;
-        private readonly ILeaveAllocationService _leaveAllocationService;
-
-        public LeaveTypesController(ILeaveTypeService leaveTypeService, IMapper mapper, ILeaveAllocationService leaveAllocationService)
-        {
-            _leaveTypeService = leaveTypeService;
-            _mapper = mapper;
-            _leaveAllocationService = leaveAllocationService;
-        }
-
-
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var leaveTypes = await _leaveTypeService.GetLeaveTypes();
+            var leaveTypes = await leaveTypeService.GetLeaveTypes();
             return View(leaveTypes);
         }
 
@@ -42,8 +33,8 @@ namespace HR.LeaveManagement.MVC.Controllers
             {
                 try
                 {
-                    var createLeaveTypeVM = _mapper.Map<LeaveTypeVM, CreateLeaveTypeVM>(leaveTypeVM);
-                    var response = await _leaveTypeService.CreateLeaveType(leaveTypeVM);
+                    var createLeaveTypeVM = mapper.Map<LeaveTypeVM, CreateLeaveTypeVM>(leaveTypeVM);
+                    var response = await leaveTypeService.CreateLeaveType(leaveTypeVM);
                     if (response.Success)
                     {
                         var responseMessage = response.Message;
@@ -66,7 +57,7 @@ namespace HR.LeaveManagement.MVC.Controllers
         [HttpGet]
         public async Task<IActionResult> Details([FromRoute] int id, string viewName = "Details")
         {
-            var leaveType = await _leaveTypeService.GetLeaveTypeDetails(id);
+            var leaveType = await leaveTypeService.GetLeaveTypeDetails(id);
             return View(viewName, leaveType);
         }
 
@@ -81,7 +72,7 @@ namespace HR.LeaveManagement.MVC.Controllers
             if (id != leaveTypeVM.Id)
                 return BadRequest();
 
-            var response = await _leaveTypeService.DeleteLeaveType(leaveTypeVM.Id);
+            var response = await leaveTypeService.DeleteLeaveType(leaveTypeVM.Id);
             if (response.Success)
             {
                 return RedirectToAction(nameof(Index));
@@ -102,7 +93,7 @@ namespace HR.LeaveManagement.MVC.Controllers
             if (id != leaveTypeVM.Id)
                 return BadRequest();
 
-            var response = await _leaveTypeService.UpdateLeaveType(id, leaveTypeVM);
+            var response = await leaveTypeService.UpdateLeaveType(id, leaveTypeVM);
 
             if (response.Success)
                 return RedirectToAction(nameof(Index));
@@ -119,11 +110,11 @@ namespace HR.LeaveManagement.MVC.Controllers
         {
             try
             {
-                var response = await _leaveAllocationService.CreateLeaveAllocation(id);
+                var response = await leaveAllocationService.CreateLeaveAllocation(id);
                 if (response.Success)
                     return RedirectToAction(nameof(Index));
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 ModelState.AddModelError("", ex.Message);
             }

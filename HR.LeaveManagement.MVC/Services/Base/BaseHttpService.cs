@@ -1,6 +1,8 @@
 ﻿using HR.LeaveManagement.MVC.Contracts;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http.Headers;
+using System.Text;
+using System.Text.Json;
 
 namespace HR.LeaveManagement.MVC.Services.Base
 {
@@ -22,12 +24,23 @@ namespace HR.LeaveManagement.MVC.Services.Base
         {
             if (ex.StatusCode == 400)
             {
-                return new Response<Guid> { Message = "Validation errors have occured", Success = false, ValidationErrors = ex.Response };
+                return new Response<Guid> { Message = "There are errors from user.", Success = false, ValidationErrors = ex.Response };
             }
             else if (ex.StatusCode == 404)
             {
                 return new Response<Guid> { Message = "The requested item could not be founded!.", Success = false };
             }
+            else if (ex.StatusCode == 422)
+            {
+                var deserializedErrors = JsonSerializer.Deserialize<List<string>>(ex.Response);
+                StringBuilder sb = new();
+                foreach (var error in deserializedErrors!)
+                {
+                    sb.AppendLine(error);
+                }
+                return new Response<Guid> { Message = "There are errors from user.", Success = false, ValidationErrors = sb.ToString() };
+            }
+
             return new Response<Guid> { Message = "Something went wrong please try again", Success = false };
         }
 
@@ -36,8 +49,6 @@ namespace HR.LeaveManagement.MVC.Services.Base
             if (!_localStorageService.Exists(token))
             {
                 var tokenContent = JwtSecurityTokenHandler.ReadJwtToken(token);
-
-                var validTo = tokenContent.ValidTo;
 
                 _client.HttpClient.DefaultRequestHeaders.Authorization =
                     new AuthenticationHeaderValue("Bearer", token);

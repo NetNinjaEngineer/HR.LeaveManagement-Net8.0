@@ -29,12 +29,12 @@ namespace HR.LeaveManagement.MVC.Controllers
         {
             if (ModelState.IsValid)
             {
-                bool isLoggedIn = await _authService.Authenticate(loginViewModel.Email!, loginViewModel.Password!);
+                var response = await _authService.Authenticate(loginViewModel.Email!, loginViewModel.Password!);
 
-                if (isLoggedIn)
+                if (response.Success)
                     return RedirectToAction("Index", "Home");
                 else
-                    ModelState.AddModelError("", "Invalid crediantials");
+                    ModelState.AddModelError("", response.ValidationErrors!); // todo
 
             }
 
@@ -55,17 +55,14 @@ namespace HR.LeaveManagement.MVC.Controllers
             if (ModelState.IsValid)
             {
                 RegisterModel registerModel = _mapper.Map<RegisterViewModel, RegisterModel>(model);
-                var isRegistered = await _authService.Register(registerModel);
-                if (isRegistered)
+                var response = await _authService.Register(registerModel);
+                if (response.Success)
                     return RedirectToAction("Index", "Home");
-                ModelState.AddModelError("", "Invalid Register Crediantials, please try again");
+                ModelState.AddModelError("", string.Empty);
             }
 
             return View(model);
         }
-
-
-
 
         [HttpPost]
         [ValidateAntiForgeryToken]

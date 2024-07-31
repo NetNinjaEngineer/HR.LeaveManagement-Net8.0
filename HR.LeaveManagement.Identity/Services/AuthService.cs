@@ -1,5 +1,6 @@
-﻿using HR.LeaveManagement.Application.Contracts.Identity;
-using HR.LeaveManagement.Application.Contracts.Identity.Models;
+﻿using HR.LeaveManagement.Application.Constants;
+using HR.LeaveManagement.Application.Contracts.Identity;
+using HR.LeaveManagement.Application.Models.Identity;
 using HR.LeaveManagement.Identity.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -11,22 +12,18 @@ using System.Text;
 
 namespace HR.LeaveManagement.Identity.Services
 {
-    public class AuthService : IAuthService
+    public class AuthService(
+        UserManager<ApplicationUser> userManager,
+        RoleManager<IdentityRole> roleManager,
+        IConfiguration configuration,
+        IHttpContextAccessor contextAccessor,
+        SignInManager<ApplicationUser> signInManager) : IAuthService
     {
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly RoleManager<IdentityRole> _roleManager;
-        private readonly IConfiguration _configuration;
-        private readonly IHttpContextAccessor _contextAccessor;
-        private readonly SignInManager<ApplicationUser> _signInManager;
-
-        public AuthService(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, IConfiguration configuration, IHttpContextAccessor contextAccessor, SignInManager<ApplicationUser> signInManager)
-        {
-            _userManager = userManager;
-            _roleManager = roleManager;
-            _configuration = configuration;
-            _contextAccessor = contextAccessor;
-            _signInManager = signInManager;
-        }
+        private readonly UserManager<ApplicationUser> _userManager = userManager;
+        private readonly RoleManager<IdentityRole> _roleManager = roleManager;
+        private readonly IConfiguration _configuration = configuration;
+        private readonly IHttpContextAccessor _contextAccessor = contextAccessor;
+        private readonly SignInManager<ApplicationUser> _signInManager = signInManager;
 
         public async Task<AuthModel> GetTokenRequestModelAsync(TokenRequestModel model)
         {
@@ -83,7 +80,7 @@ namespace HR.LeaveManagement.Identity.Services
                 return new AuthModel { Message = errors };
             }
 
-            await _userManager.AddToRoleAsync(user, "User");
+            await _userManager.AddToRoleAsync(user, "Employee");
 
             var jwtSecurityToken = await CreateJwtToken(user);
 
@@ -118,7 +115,7 @@ namespace HR.LeaveManagement.Identity.Services
                 new Claim(JwtRegisteredClaimNames.Sub, user.UserName!),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new Claim(JwtRegisteredClaimNames.Email, user.Email!),
-                new Claim("uid", user.Id)
+                new Claim(CustomClaimTypes.Uid, user.Id)
             }
                 .Union(userClaims)
                 .Union(roleClaims);

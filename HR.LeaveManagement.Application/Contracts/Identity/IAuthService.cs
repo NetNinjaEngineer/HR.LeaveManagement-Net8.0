@@ -1,4 +1,4 @@
-﻿using HR.LeaveManagement.Application.Contracts.Identity.Models;
+﻿using HR.LeaveManagement.Application.Models.Identity;
 
 namespace HR.LeaveManagement.Application.Contracts.Identity
 {

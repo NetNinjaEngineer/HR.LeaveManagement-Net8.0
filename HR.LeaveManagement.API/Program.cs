@@ -5,16 +5,12 @@ using HR.LeaveManagement.Identity;
 using HR.LeaveManagement.Infrastructure;
 using HR.LeaveManagement.Persistence;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.Formatters;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
-using Microsoft.OpenApi.Models;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
-var services = builder.Services;
-var configuration = builder.Configuration;
 
-services.AddControllers(options =>
+builder.Services.AddControllers(options =>
 {
     options.Filters.Add(new ProducesResponseTypeAttribute(StatusCodes.Status400BadRequest));
 
@@ -24,80 +20,20 @@ services.AddControllers(options =>
 
     options.OutputFormatters.RemoveType<StringOutputFormatter>();
 
-})
-    .ConfigureApiBehaviorOptions(setupAction =>
-    {
-        setupAction.InvalidModelStateResponseFactory = context =>
-        {
-            var problemDetailsFactory = context.HttpContext.RequestServices
-            .GetRequiredService<ProblemDetailsFactory>();
-
-            var validationProblemDetails = problemDetailsFactory.CreateValidationProblemDetails(context.HttpContext,
-                context.ModelState);
-
-            validationProblemDetails.Detail = "See the errors field for details";
-            validationProblemDetails.Instance = context.HttpContext.Request.Path;
-
-            var actionExecutingContext = context as ActionExecutingContext;
-            if ((context.ModelState.ErrorCount > 0)
-                && (actionExecutingContext?.ActionArguments.Count ==
-                context.ActionDescriptor.Parameters.Count))
-            {
-                validationProblemDetails.Status = StatusCodes.Status422UnprocessableEntity;
-                validationProblemDetails.Title = "One or more validation errors occurred";
-
-                return new UnprocessableEntityObjectResult(validationProblemDetails)
-                {
-                    ContentTypes = { "application/problem+json" }
-                };
-            }
-
-            validationProblemDetails.Status = StatusCodes.Status400BadRequest;
-            validationProblemDetails.Title = "One or more error on input occurred";
-            return new BadRequestObjectResult(validationProblemDetails)
-            {
-                ContentTypes = { "application/problem+json" }
-            };
-        };
-    });
-
-services.AddEndpointsApiExplorer();
-services.AddSwaggerGen();
-
-services.ConfigureApplicationServices();
-services.ConfigureInfrastructureServices(configuration);
-services.ConfigurePersistenceServices(configuration);
-services.ConfigureApiServices();
-services.ConfigureIdentity(builder.Configuration);
-
-builder.Services.AddTransient<GlobalExceptionHandlingMiddleware>();
-
-builder.Services.AddSwaggerGen(options =>
-{
-    options.AddSecurityDefinition("HR.LeaveManagement", new OpenApiSecurityScheme()
-    {
-        Type = SecuritySchemeType.Http,
-        Scheme = "Bearer",
-        Description = "Input a valid token to access this API"
-    });
-
-    options.AddSecurityRequirement(new OpenApiSecurityRequirement()
-    {
-        {
-            new OpenApiSecurityScheme
-            {
-                Reference = new OpenApiReference
-                {
-                    Type = ReferenceType.SecurityScheme,
-                    Id = "HR.LeaveManagement"
-                }
-            },
-            new List<string>()
-        }
-    });
 });
 
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.ConfigureApplicationServices();
+builder.Services.ConfigureInfrastructureServices(builder.Configuration);
+builder.Services.ConfigurePersistenceServices(builder.Configuration);
+builder.Services.ConfigureApiServices();
+builder.Services.ConfigureIdentity(builder.Configuration);
+
 var app = builder.Build();
+
+using var scope = app.Services.CreateScope();
+var dbContext = scope.ServiceProvider.GetRequiredService<HRLeaveManagementDbContext>();
+await dbContext.Database.MigrateAsync();
 
 if (app.Environment.IsDevelopment())
 {

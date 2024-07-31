@@ -18,7 +18,7 @@ namespace HR.LeaveManagement.MVC.Services
             JwtSecurityTokenHandler = new JwtSecurityTokenHandler();
         }
 
-        public async Task<bool> Authenticate(string email, string password)
+        public async Task<Response<Guid>> Authenticate(string email, string password)
         {
             try
             {
@@ -41,16 +41,16 @@ namespace HR.LeaveManagement.MVC.Services
 
                     _localStorageService.SetStorageValue("token", response.Token);
 
-                    return true;
+                    return new Response<Guid> { Success = true };
 
                 }
 
-                return false;
+                return new Response<Guid> { Success = false };
 
             }
-            catch
+            catch (ApiException ex)
             {
-                return false;
+                return ConvertApiExceptions<Guid>(ex);
             }
         }
 
@@ -68,19 +68,18 @@ namespace HR.LeaveManagement.MVC.Services
             await _contextAccessor.HttpContext!.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
         }
 
-        public async Task<bool> Register(RegisterModel registerModel)
+        public async Task<Response<Guid>> Register(RegisterModel registerModel)
         {
             try
             {
                 AuthModel authModelResponse = await _client.RegisterAsync(registerModel);
                 if (authModelResponse.IsAuthenticated && authModelResponse.Token != string.Empty)
                     return await Authenticate(registerModel.Email, registerModel.Password);
-
-                return false;
+                return new Response<Guid> { Success = false, Message = authModelResponse.Message };
             }
             catch
             {
-                return false;
+                return new Response<Guid> { Success = false };
             }
         }
     }

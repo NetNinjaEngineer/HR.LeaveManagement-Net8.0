@@ -102,6 +102,9 @@ namespace HR.LeaveManagement.Persistence.Migrations
                     b.Property<string>("RequestComments")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("RequestingEmployeeId")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime2");
 

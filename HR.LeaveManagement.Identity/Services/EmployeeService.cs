@@ -1,12 +1,7 @@
 ﻿using HR.LeaveManagement.Application.Contracts.Identity;
-using HR.LeaveManagement.Application.Contracts.Identity.Models;
+using HR.LeaveManagement.Application.Models.Identity;
 using HR.LeaveManagement.Identity.Models;
 using Microsoft.AspNetCore.Identity;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace HR.LeaveManagement.Identity.Services
 {
@@ -17,6 +12,18 @@ namespace HR.LeaveManagement.Identity.Services
         public EmployeeService(UserManager<ApplicationUser> userManager)
         {
             _userManager = userManager;
+        }
+
+        public async Task<Employee> GetEmployeeById(string id)
+        {
+            var employee = await _userManager.FindByIdAsync(id);
+            return new Employee
+            {
+                EmployeeId = employee.Id,
+                FirstName = employee.FirstName,
+                LastName = employee.LastName,
+                Email = employee.Email
+            };
         }
 
         public async Task<List<Employee>> GetEmployeesAsync()

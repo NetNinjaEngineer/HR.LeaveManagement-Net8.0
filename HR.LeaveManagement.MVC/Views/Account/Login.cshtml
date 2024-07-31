@@ -1,65 +1,38 @@
-﻿@model LoginViewModel
+﻿@model HR.LeaveManagement.MVC.Models.LoginViewModel
 
 @{
     ViewData["Title"] = "Login";
-    Layout = "~/Views/Shared/_AuthLayout.cshtml";
+    Layout = "~/Views/Shared/_AccountLayout.cshtml";
 }
 
-<div class="limiter">
-	<div asp-validation-summary="All" class="text-danger"></div>
-	<div class="container-login100">
-		<div class="wrap-login100">
-			<div class="login100-pic js-tilt" data-tilt>
-				<img src="~/Images/img-01.png" alt="IMG">
-			</div>
+<h1>Login</h1>
 
-			<form class="login100-form validate-form" asp-action="Login">
-				<span class="login100-form-title">
-					Member Login
-				</span>
-
-				<div class="wrap-input100 validate-input" data-validate="Valid email is required: ex@abc.xyz">
-					<input class="input100" type="text" asp-for="Email" placeholder="Email">
-					<span class="focus-input100"></span>
-					<span class="symbol-input100">
-						<i class="fa fa-envelope" aria-hidden="true"></i>
-					</span>
-				</div>
-
-				<div class="wrap-input100 validate-input" data-validate="Password is required">
-					<input class="input100" asp-for="Password" placeholder="Password">
-					<span class="focus-input100"></span>
-					<span class="symbol-input100">
-						<i class="fa fa-lock" aria-hidden="true"></i>
-					</span>
-				</div>
-
-				<div class="container-login100-form-btn">
-					<button class="login100-form-btn" type="submit">
-						Login
-					</button>
-				</div>
-
-				<div class="text-center p-t-12">
-					<span class="txt1">
-						Forgot
-					</span>
-					<a class="txt2" href="#">
-						Username / Password?
-					</a>
-				</div>
-
-				<div class="text-center p-t-136">
-					<a class="txt2" asp-action="Register">
-						Create your Account
-						<i class="fa fa-long-arrow-right m-l-5" aria-hidden="true"></i>
-					</a>
-				</div>
-			</form>
-		</div>
-	</div>
+<h4>LoginViewModel</h4>
+<div asp-validation-summary="All" class="text-danger"></div>
+<hr />
+<div class="row">
+    <div class="col-md-12">
+        <form asp-action="Login">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Email" class="control-label"></label>
+                <input asp-for="Email" class="form-control" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Password" class="control-label"></label>
+                <input asp-for="Password" class="form-control" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Login" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
 </div>
 
+<a asp-action="Register">Not Have Account? </a>
+
 @section Scripts {
-    <partial name="_ValidationScriptsPartial" />
-} 
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

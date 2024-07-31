@@ -2,14 +2,16 @@
 
 @{
     ViewData["Title"] = "Register";
-    Layout = "~/Views/Shared/_AuthLayout.cshtml";
+    Layout = "~/Views/Shared/_AccountLayout.cshtml";
 }
-<div asp-validation-summary="All" class="text-danger"></div>
+
 <h1>Register</h1>
 
+<h4>RegisterViewModel</h4>
+<div asp-validation-summary="All" class="text-danger"></div>
 <hr />
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-12">
         <form asp-action="Register">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
@@ -48,3 +50,8 @@
         </form>
     </div>
 </div>
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -1,9 +1,9 @@
 ﻿<ul class="navbar-nav">
-    @if(User.Identity.IsAuthenticated)
+    @if(User.Identity!.IsAuthenticated)
     {
         <li class="nav-item">
             <a class="nav-link " href="#" title="Manage">
-                @User.Identity.Name
+                @User.FindFirst("Email")?.Value
             </a>
         </li>
         <li class="nav-item">
