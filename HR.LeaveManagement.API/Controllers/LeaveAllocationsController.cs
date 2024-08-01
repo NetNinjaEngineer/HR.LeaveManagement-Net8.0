@@ -21,7 +21,8 @@ namespace HR.LeaveManagement.API.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> Get(int id)
+        [ProducesResponseType(typeof(LeaveAllocationDto), StatusCodes.Status200OK)]
+        public async Task<ActionResult<LeaveAllocationDto>> Get(int id)
         {
             var response = await _mediator.Send(new GetLeaveAllocationDetailRequest { Id = id });
             return Ok(response);
@@ -37,9 +38,10 @@ namespace HR.LeaveManagement.API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<LeaveAllocationDto>> Get()
+        [ProducesResponseType(typeof(List<LeaveAllocationDto>), StatusCodes.Status200OK)]
+        public async Task<ActionResult<List<LeaveAllocationDto>>> Get(bool isLoggedInUser = false)
         {
-            var response = await _mediator.Send(new GetLeaveAllocationsListRequest());
+            var response = await _mediator.Send(new GetLeaveAllocationsListRequest() { IsLoggedInUser = isLoggedInUser });
             return Ok(response);
         }
 

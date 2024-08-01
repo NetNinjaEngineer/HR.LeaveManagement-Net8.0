@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace HR.LeaveManagement.MVC.Controllers;
 
-[Authorize]
+
 public class LeaveRequestsController : Controller
 {
     private readonly ILeaveTypeService _leaveTypeService;
@@ -23,19 +23,23 @@ public class LeaveRequestsController : Controller
     }
 
     // GET: LeaveRequestsController
-    public async Task<ActionResult> Index()
+    [Authorize(Roles = "Adminstrator")]
+    public async Task<IActionResult> Index()
     {
-        return View();
+        var model = await _leaveRequestService.GetAdminLeaveRequestList();
+        return View(model);
     }
 
     // GET: LeaveRequestsController/Details/5
-    public ActionResult Details(int id)
+    [Authorize(Roles = "Adminstrator")]
+    public async Task<IActionResult> Details(int id)
     {
-        return View();
+        var leaveRequest = await _leaveRequestService.GetLeaveRequest(id);
+        return View(leaveRequest);
     }
 
     // GET: LeaveRequestsController/Create
-    public async Task<ActionResult> Create()
+    public async Task<IActionResult> Create()
     {
         var leaveTypes = await _leaveTypeService.GetLeaveTypes();
         var leaveTypeItems = new SelectList(leaveTypes, "Id", "Name");
@@ -50,7 +54,7 @@ public class LeaveRequestsController : Controller
     // POST: LeaveRequestsController/Create
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<ActionResult> Create(CreateLeaveRequestVM leaveRequestVM)
+    public async Task<IActionResult> Create(CreateLeaveRequestVM leaveRequestVM)
     {
         try
         {
@@ -58,7 +62,7 @@ public class LeaveRequestsController : Controller
             {
                 var response = await _leaveRequestService.CreateLeaveRequest(leaveRequestVM);
                 if (response.Success)
-                    return Redirect(nameof(Index));
+                    return RedirectToAction(nameof(Create));
                 else
                     ModelState.AddModelError("", response.ValidationErrors!);
             }
@@ -77,45 +81,20 @@ public class LeaveRequestsController : Controller
         }
     }
 
-    // GET: LeaveRequestsController/Edit/5
-    public ActionResult Edit(int id)
-    {
-        return View();
-    }
 
-    // POST: LeaveRequestsController/Edit/5
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public ActionResult Edit(int id, IFormCollection collection)
+    [Authorize(Roles = "Adminstrator")]
+    public async Task<IActionResult> ApproveRequest(int id, bool approved)
     {
         try
         {
+            await _leaveRequestService.ApproveLeaveRequest(id, approved);
             return RedirectToAction(nameof(Index));
         }
-        catch
-        {
-            return View();
-        }
-    }
-
-    // GET: LeaveRequestsController/Delete/5
-    public ActionResult Delete(int id)
-    {
-        return View();
-    }
-
-    // POST: LeaveRequestsController/Delete/5
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public ActionResult Delete(int id, IFormCollection collection)
-    {
-        try
+        catch (Exception)
         {
             return RedirectToAction(nameof(Index));
-        }
-        catch
-        {
-            return View();
         }
     }
 }

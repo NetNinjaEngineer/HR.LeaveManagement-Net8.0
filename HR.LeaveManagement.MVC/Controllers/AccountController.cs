@@ -58,7 +58,7 @@ namespace HR.LeaveManagement.MVC.Controllers
                 var response = await _authService.Register(registerModel);
                 if (response.Success)
                     return RedirectToAction("Index", "Home");
-                ModelState.AddModelError("", string.Empty);
+                ModelState.AddModelError("", response.ValidationErrors!);
             }
 
             return View(model);

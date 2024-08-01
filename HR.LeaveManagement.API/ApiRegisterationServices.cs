@@ -1,5 +1,4 @@
 ﻿using HR.LeaveManagement.API.ActionFilters.LeaveType;
-using HR.LeaveManagement.API.BackgroundTasks;
 using HR.LeaveManagement.API.Middlewares;
 using Microsoft.OpenApi.Models;
 
@@ -14,8 +13,6 @@ namespace HR.LeaveManagement.API
             services.AddScoped<LeaveTypeCreateValidationsFilter>();
 
             services.AddScoped<LeaveRequestCreateValidationsFilter>();
-
-            services.AddHostedService<RunEFMigrationsBackgroundTask>();
 
             services.AddTransient<GlobalExceptionHandlingMiddleware>();
 

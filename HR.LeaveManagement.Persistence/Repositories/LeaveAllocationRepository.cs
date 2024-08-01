@@ -33,6 +33,15 @@ namespace HR.LeaveManagement.Persistence.Repositories
             return leaveAllocations;
         }
 
+        public async Task<List<LeaveAllocation>> GetLeaveAllocationsWithDetails(string id)
+        {
+            var leaveAllocations = await _context.LeaveAllocations.Where(x => x.EmployeeId == id)
+                .Include(x => x.LeaveType)
+                .ToListAsync();
+
+            return leaveAllocations;
+        }
+
         public async Task<LeaveAllocation> GetLeaveAllocationWithDetails(int id)
         {
             var leaveAllocation = await
@@ -43,5 +52,9 @@ namespace HR.LeaveManagement.Persistence.Repositories
             return leaveAllocation!;
 
         }
+
+        public async Task<LeaveAllocation?> GetUserAllocations(string userId, int leaveTypeId)
+            => await _context.LeaveAllocations.FirstOrDefaultAsync(x =>
+                x.LeaveTypeId == leaveTypeId && x.EmployeeId == userId);
     }
 }

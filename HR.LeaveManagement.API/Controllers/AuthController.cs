@@ -22,7 +22,7 @@ namespace HR.LeaveManagement.API.Controllers
         public async Task<ActionResult<AuthModel>> RegisterAsync(RegisterModel registerModel)
         {
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+                return UnprocessableEntity(ModelState);
 
             var result = await _authService.RegisterAsync(registerModel);
 

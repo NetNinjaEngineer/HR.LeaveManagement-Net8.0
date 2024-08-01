@@ -15,7 +15,6 @@ namespace HR.LeaveManagement.Application.Models.Identity
 
         [Required, StringLength(128)]
         public string? Email { get; set; }
-        public DateTime DateOfBirth { get; set; }
 
         [Required, StringLength(265)]
         public string? Password { get; set; }

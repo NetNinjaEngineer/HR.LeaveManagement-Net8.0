@@ -57,11 +57,11 @@ namespace HR.LeaveManagement.MVC.Services.Base
         System.Threading.Tasks.Task LogoutAsync(System.Threading.CancellationToken cancellationToken);
 
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task LeaveAllocationsGETAsync(int id);
+        System.Threading.Tasks.Task<LeaveAllocationDto> LeaveAllocationsGETAsync(int id);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task LeaveAllocationsGETAsync(int id, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<LeaveAllocationDto> LeaveAllocationsGETAsync(int id, System.Threading.CancellationToken cancellationToken);
 
         /// <exception cref="ApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task LeaveAllocationsPUTAsync(int id, UpdateLeaveAllocationDto body);
@@ -87,18 +87,18 @@ namespace HR.LeaveManagement.MVC.Services.Base
         System.Threading.Tasks.Task<BaseCommandResponse> LeaveAllocationsPOSTAsync(CreateLeaveAllocationDto body, System.Threading.CancellationToken cancellationToken);
 
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task LeaveAllocationsGET2Async();
+        System.Threading.Tasks.Task<ICollection<LeaveAllocationDto>> LeaveAllocationsGET2Async(bool? isLoggedInUser);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task LeaveAllocationsGET2Async(System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<ICollection<LeaveAllocationDto>> LeaveAllocationsGET2Async(bool? isLoggedInUser, System.Threading.CancellationToken cancellationToken);
 
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task LeaveRequestsGETAsync(int id);
+        System.Threading.Tasks.Task<LeaveRequestDto> LeaveRequestsGETAsync(int id);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task LeaveRequestsGETAsync(int id, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<LeaveRequestDto> LeaveRequestsGETAsync(int id, System.Threading.CancellationToken cancellationToken);
 
         /// <exception cref="ApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task LeaveRequestsPUTAsync(int id, UpdateLeaveRequestDto body);
@@ -115,11 +115,11 @@ namespace HR.LeaveManagement.MVC.Services.Base
         System.Threading.Tasks.Task LeaveRequestsDELETEAsync(int id, System.Threading.CancellationToken cancellationToken);
 
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task LeaveRequestsGET2Async();
+        System.Threading.Tasks.Task<ICollection<LeaveRequestListDto>> LeaveRequestsGET2Async(bool? isLoggedInUser);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task LeaveRequestsGET2Async(System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<ICollection<LeaveRequestListDto>> LeaveRequestsGET2Async(bool? isLoggedInUser, System.Threading.CancellationToken cancellationToken);
 
         /// <exception cref="ApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<CreateCommandResponse> LeaveRequestsPOSTAsync(CreateLeaveRequestDto body);
@@ -265,22 +265,13 @@ namespace HR.LeaveManagement.MVC.Services.Base
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 400)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            throw new ApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            var response = await response_.Content.ReadAsStringAsync();
+                            throw new ApiException("Bad Request", 400, JsonSerializer.Deserialize<string>(response), headers_, null);
                         }
                         else
                         if (status_ == 406)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            throw new ApiException<ProblemDetails>("Not Acceptable", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new ApiException("Not Acceptable", 406, "", headers_, null);
                         }
                         else
                         if (status_ == 500)
@@ -291,12 +282,7 @@ namespace HR.LeaveManagement.MVC.Services.Base
                         else
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<AuthModel>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            return objectResponse_.Object;
+                            return JsonSerializer.Deserialize<AuthModel>(await response_.Content.ReadAsStringAsync());
                         }
                         else
                         {
@@ -508,14 +494,14 @@ namespace HR.LeaveManagement.MVC.Services.Base
         }
 
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task LeaveAllocationsGETAsync(int id)
+        public virtual System.Threading.Tasks.Task<LeaveAllocationDto> LeaveAllocationsGETAsync(int id)
         {
             return LeaveAllocationsGETAsync(id, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task LeaveAllocationsGETAsync(int id, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<LeaveAllocationDto> LeaveAllocationsGETAsync(int id, System.Threading.CancellationToken cancellationToken)
         {
             if (id == null)
                 throw new System.ArgumentNullException("id");
@@ -586,8 +572,7 @@ namespace HR.LeaveManagement.MVC.Services.Base
 
                         if (status_ == 200 || status_ == 204)
                         {
-
-                            return;
+                            return JsonSerializer.Deserialize<LeaveAllocationDto>(await response_.Content.ReadAsStringAsync());
                         }
                         else
                         {
@@ -926,14 +911,14 @@ namespace HR.LeaveManagement.MVC.Services.Base
         }
 
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task LeaveAllocationsGET2Async()
+        public virtual System.Threading.Tasks.Task<ICollection<LeaveAllocationDto>> LeaveAllocationsGET2Async(bool? isLoggedInUser)
         {
-            return LeaveAllocationsGET2Async(System.Threading.CancellationToken.None);
+            return LeaveAllocationsGET2Async(isLoggedInUser, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task LeaveAllocationsGET2Async(System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<ICollection<LeaveAllocationDto>> LeaveAllocationsGET2Async(bool? isLoggedInUser, System.Threading.CancellationToken cancellationToken)
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -946,7 +931,7 @@ namespace HR.LeaveManagement.MVC.Services.Base
                     var urlBuilder_ = new System.Text.StringBuilder();
                 
                     // Operation Path: "api/LeaveAllocations"
-                    urlBuilder_.Append("api/LeaveAllocations");
+                    urlBuilder_.Append($"api/LeaveAllocations?isLoggedInUser={isLoggedInUser}");
 
                     PrepareRequest(client_, request_, urlBuilder_);
 
@@ -1000,8 +985,8 @@ namespace HR.LeaveManagement.MVC.Services.Base
 
                         if (status_ == 200 || status_ == 204)
                         {
-
-                            return;
+                            var leaveAllocations = JsonSerializer.Deserialize<ICollection<LeaveAllocationDto>>(await response_.Content.ReadAsStringAsync());
+                            return leaveAllocations;
                         }
                         else
                         {
@@ -1024,14 +1009,14 @@ namespace HR.LeaveManagement.MVC.Services.Base
         }
 
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task LeaveRequestsGETAsync(int id)
+        public virtual System.Threading.Tasks.Task<LeaveRequestDto> LeaveRequestsGETAsync(int id)
         {
             return LeaveRequestsGETAsync(id, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task LeaveRequestsGETAsync(int id, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<LeaveRequestDto> LeaveRequestsGETAsync(int id, System.Threading.CancellationToken cancellationToken)
         {
             if (id == null)
                 throw new System.ArgumentNullException("id");
@@ -1102,8 +1087,7 @@ namespace HR.LeaveManagement.MVC.Services.Base
 
                         if (status_ == 200 || status_ == 204)
                         {
-
-                            return;
+                            return JsonSerializer.Deserialize<LeaveRequestDto>(await response_.Content.ReadAsStringAsync());
                         }
                         else
                         {
@@ -1334,14 +1318,14 @@ namespace HR.LeaveManagement.MVC.Services.Base
         }
 
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task LeaveRequestsGET2Async()
+        public virtual System.Threading.Tasks.Task<ICollection<LeaveRequestListDto>> LeaveRequestsGET2Async(bool? isLoggedInUser)
         {
-            return LeaveRequestsGET2Async(System.Threading.CancellationToken.None);
+            return LeaveRequestsGET2Async(isLoggedInUser, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task LeaveRequestsGET2Async(System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<ICollection<LeaveRequestListDto>> LeaveRequestsGET2Async(bool? isLoggedInUser, System.Threading.CancellationToken cancellationToken)
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -1354,7 +1338,7 @@ namespace HR.LeaveManagement.MVC.Services.Base
                     var urlBuilder_ = new System.Text.StringBuilder();
                 
                     // Operation Path: "api/LeaveRequests"
-                    urlBuilder_.Append("api/LeaveRequests");
+                    urlBuilder_.Append($"api/LeaveRequests?isLoggedInUser={isLoggedInUser}");
 
                     PrepareRequest(client_, request_, urlBuilder_);
 
@@ -1408,8 +1392,7 @@ namespace HR.LeaveManagement.MVC.Services.Base
 
                         if (status_ == 200 || status_ == 204)
                         {
-
-                            return;
+                            return JsonSerializer.Deserialize<ICollection<LeaveRequestListDto>>(await response_.Content.ReadAsStringAsync());
                         }
                         else
                         {
@@ -2637,6 +2620,79 @@ namespace HR.LeaveManagement.MVC.Services.Base
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class LeaveRequestDto
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("id")]
+        public int Id { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("startDate")]
+        public System.DateTimeOffset StartDate { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("endDate")]
+        public System.DateTimeOffset EndDate { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("leaveTypeId")]
+        public int LeaveTypeId { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("leaveType")]
+        public LeaveTypeDto LeaveType { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("dateRequested")]
+        public System.DateTimeOffset DateRequested { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("requestComments")]
+        public string RequestComments { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("dateActioned")]
+        public System.DateTimeOffset? DateActioned { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("approved")]
+        public bool? Approved { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("cancelled")]
+        public bool Cancelled { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("employee")]
+        public Employee Employee { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("requestingEmployeeId")]
+        public string RequestingEmployeeId { get; set; }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class LeaveRequestListDto
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("id")]
+        public int Id { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("leaveType")]
+        public LeaveTypeDto LeaveType { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("dateRequested")]
+        public System.DateTimeOffset DateRequested { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("startDate")]
+        public System.DateTimeOffset StartDate { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("endDate")]
+        public System.DateTimeOffset EndDate { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("approved")]
+        public bool? Approved { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("employee")]
+        public Employee Employee { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("requestingEmployeeId")]
+        public string RequestingEmployeeId { get; set; }
+
+    }
+
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial record UpdateLeaveTypeDto
     {
 
@@ -2648,6 +2704,52 @@ namespace HR.LeaveManagement.MVC.Services.Base
 
     }
 
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class Employee
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("employeeId")]
+        public string EmployeeId { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("firstName")]
+        public string FirstName { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("lastName")]
+        public string LastName { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("email")]
+        public string Email { get; set; }
+
+    }
+
+
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class LeaveAllocationDto
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("id")]
+        public int Id { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("numberOfDays")]
+        public int NumberOfDays { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("leaveType")]
+        public LeaveTypeDto LeaveType { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("leaveTypeId")]
+        public int LeaveTypeId { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("period")]
+        public int Period { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("employee")]
+        public Employee Employee { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("requestingEmployeeId")]
+        public string RequestingEmployeeId { get; set; }
+
+    }
 
 
     [System.CodeDom.Compiler.GeneratedCode("NSwag", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]

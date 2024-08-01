@@ -8,10 +8,23 @@ namespace HR.LeaveManagement.MVC.Profiles
     {
         public MappingProfile()
         {
-            CreateMap<CreateLeaveTypeDto, LeaveTypeVM>().ReverseMap();
+            CreateMap<CreateLeaveTypeDto, CreateLeaveTypeVM>().ReverseMap();
+            CreateMap<CreateLeaveRequestDto, CreateLeaveRequestVM>().ReverseMap();
+            CreateMap<LeaveRequestDto, LeaveRequestVM>()
+                .ForMember(q => q.DateRequested, opt => opt.MapFrom(x => x.DateRequested.DateTime))
+                .ForMember(q => q.StartDate, opt => opt.MapFrom(x => x.StartDate.DateTime))
+                .ForMember(q => q.EndDate, opt => opt.MapFrom(x => x.EndDate.DateTime))
+                .ReverseMap();
+            CreateMap<LeaveRequestListDto, LeaveRequestVM>()
+                .ForMember(q => q.DateRequested, opt => opt.MapFrom(x => x.DateRequested.DateTime))
+                .ForMember(q => q.StartDate, opt => opt.MapFrom(x => x.StartDate.DateTime))
+                .ForMember(q => q.EndDate, opt => opt.MapFrom(x => x.EndDate.DateTime))
+                .ReverseMap();
             CreateMap<LeaveTypeDto, LeaveTypeVM>().ReverseMap();
-            CreateMap<RegisterViewModel, RegisterModel>();
-            CreateMap<CreateLeaveRequestVM, CreateLeaveRequestDto>().ReverseMap();
+            CreateMap<LeaveAllocationDto, LeaveAllocationVM>().ReverseMap();
+            CreateMap<RegisterViewModel, RegisterModel>().ReverseMap();
+            CreateMap<EmployeeVM, Employee>().ReverseMap();
+
         }
     }
 }

@@ -77,9 +77,9 @@ namespace HR.LeaveManagement.MVC.Services
                     return await Authenticate(registerModel.Email, registerModel.Password);
                 return new Response<Guid> { Success = false, Message = authModelResponse.Message };
             }
-            catch
+            catch (ApiException ex)
             {
-                return new Response<Guid> { Success = false };
+                return ConvertApiExceptions<Guid>(ex);
             }
         }
     }

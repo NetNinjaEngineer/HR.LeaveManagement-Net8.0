@@ -22,6 +22,7 @@ namespace HR.LeaveManagement.API.Controllers
         }
 
         [HttpGet("{id}")]
+        [ProducesResponseType(typeof(LeaveRequestDto), StatusCodes.Status200OK)]
         public async Task<ActionResult<LeaveRequestDto>> Get(int id)
         {
             var leaveRequests = await _mediator.Send(new GetLeaveRequestDetail() { Id = id });
@@ -29,9 +30,10 @@ namespace HR.LeaveManagement.API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<LeaveRequestListDto>>> Get()
+        [ProducesResponseType(typeof(List<LeaveRequestListDto>), StatusCodes.Status200OK)]
+        public async Task<ActionResult<List<LeaveRequestListDto>>> Get(bool isLoggedInUser = false)
         {
-            var leaveRequests = await _mediator.Send(new GetLeaveRequestList());
+            var leaveRequests = await _mediator.Send(new GetLeaveRequestList() { IsLoggedInUser = isLoggedInUser });
             return Ok(leaveRequests);
         }
 
