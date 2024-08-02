@@ -2,6 +2,7 @@
 using HR.LeaveManagement.Application.Contracts.Persistence;
 using HR.LeaveManagement.Application.Features.LeaveTypes.Requests.Commands;
 using HR.LeaveManagement.Application.Responses;
+using HR.LeaveManagement.Domain;
 using MediatR;
 
 namespace HR.LeaveManagement.Application.Features.LeaveTypes.Handlers.Commands
@@ -9,18 +10,18 @@ namespace HR.LeaveManagement.Application.Features.LeaveTypes.Handlers.Commands
     public class DeleteLeaveTypeCommandHandler : IRequestHandler<DeleteLeaveTypeCommand, DeleteCommandResponse>
     {
         private readonly IMapper _mapper;
-        private readonly ILeaveTypeRepository _leaveTypeRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public DeleteLeaveTypeCommandHandler(IMapper mapper, ILeaveTypeRepository leaveTypeRepository)
+        public DeleteLeaveTypeCommandHandler(IMapper mapper, IUnitOfWork unitOfWork)
         {
             _mapper = mapper;
-            _leaveTypeRepository = leaveTypeRepository;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<DeleteCommandResponse> Handle(DeleteLeaveTypeCommand request, CancellationToken cancellationToken)
         {
             var deleteCommandResponse = new DeleteCommandResponse();
-            var leaveType = await _leaveTypeRepository.Get(request.Id);
+            var leaveType = await _unitOfWork.Repository<LeaveType>()!.Get(request.Id);
             if (leaveType == null)
             {
                 deleteCommandResponse.StatusCode = 404;
@@ -29,7 +30,8 @@ namespace HR.LeaveManagement.Application.Features.LeaveTypes.Handlers.Commands
                 return deleteCommandResponse;
             }
 
-            await _leaveTypeRepository.Delete(leaveType);
+            await _unitOfWork.Repository<LeaveType>()!.Delete(leaveType);
+            await _unitOfWork.SaveAsync();
 
             deleteCommandResponse.Id = request.Id;
             deleteCommandResponse.Succeeded = true;

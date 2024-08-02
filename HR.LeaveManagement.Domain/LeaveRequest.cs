@@ -12,7 +12,7 @@ namespace HR.LeaveManagement.Domain
 
         public LeaveType LeaveType { get; set; }
 
-        public DateTime DateRequested { get; set; }
+        public DateTime DateRequested { get; set; } = DateTime.Now;
 
         public string? RequestComments { get; set; }
 

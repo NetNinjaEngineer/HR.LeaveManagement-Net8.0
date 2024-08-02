@@ -30,6 +30,13 @@ public class LeaveRequestsController : Controller
         return View(model);
     }
 
+    [Authorize(Roles = "Employee")]
+    public async Task<IActionResult> MyLeave()
+    {
+        var model = await _leaveRequestService.GetEmployeeLeaveRequests();
+        return View(model);
+    }
+
     // GET: LeaveRequestsController/Details/5
     [Authorize(Roles = "Adminstrator")]
     public async Task<IActionResult> Details(int id)

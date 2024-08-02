@@ -17,23 +17,20 @@ namespace HR.LeaveManagement.Application.Features.LeaveRequests.Handlers.Command
         : IRequestHandler<CreateLeaveRequestCommand, CreateCommandResponse>
     {
         private readonly IMapper _mapper;
-        private readonly ILeaveRequestRepository _leaveRequestRepository;
-        private readonly ILeaveTypeRepository _leaveTypeRepository;
         private readonly IEmailSender _emailSender;
         private readonly IHttpContextAccessor _contextAccessor;
+        private readonly IUnitOfWork _unitOfWork;
 
         public CreateLeaveRequestCommandHandler(
             IMapper mapper,
-            ILeaveRequestRepository leaveRequestRepository,
-            ILeaveTypeRepository leaveTypeRepository,
             IEmailSender emailSender,
-            IHttpContextAccessor contextAccessor)
+            IHttpContextAccessor contextAccessor,
+            IUnitOfWork unitOfWork)
         {
             _mapper = mapper;
-            _leaveRequestRepository = leaveRequestRepository;
-            _leaveTypeRepository = leaveTypeRepository;
             _emailSender = emailSender;
             _contextAccessor = contextAccessor;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<CreateCommandResponse> Handle(
@@ -57,7 +54,7 @@ namespace HR.LeaveManagement.Application.Features.LeaveRequests.Handlers.Command
             else
             {
 
-                var leaveTypeIdValid = await _leaveTypeRepository.Exists(request.CreateLeaveRequestDto.LeaveTypeId);
+                var leaveTypeIdValid = await _unitOfWork.Repository<LeaveType>()!.Exists(request.CreateLeaveRequestDto.LeaveTypeId);
                 if (!leaveTypeIdValid)
                 {
                     createCommandResponse.Succeeded = false;
@@ -67,7 +64,7 @@ namespace HR.LeaveManagement.Application.Features.LeaveRequests.Handlers.Command
 
                 LeaveRequest? leaveRequest = _mapper.Map<LeaveRequest>(request.CreateLeaveRequestDto);
                 leaveRequest.RequestingEmployeeId = userId;
-                leaveRequest = await _leaveRequestRepository.Add(leaveRequest);
+                leaveRequest = await _unitOfWork.Repository<LeaveRequest>()!.Add(leaveRequest);
 
                 var emailAddress = _contextAccessor.HttpContext.User.FindFirst(ClaimTypes.Email)?.Value;
 

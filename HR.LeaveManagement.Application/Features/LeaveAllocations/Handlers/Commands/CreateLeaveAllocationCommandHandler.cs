@@ -13,28 +13,34 @@ namespace HR.LeaveManagement.Application.Features.LeaveAllocations.Handlers.Comm
     public class CreateLeaveAllocationCommandHandler : IRequestHandler<CreateLeaveAllocationCommand, BaseCommandResponse>
     {
         private readonly IMapper _mapper;
+        private readonly IEmployeeService _employeeService;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly ILeaveAllocationRepository _leaveAllocationRepository;
         private readonly ILeaveTypeRepository _leaveTypeRepository;
-        private readonly IEmployeeService _employeeService;
 
-        public CreateLeaveAllocationCommandHandler(IMapper mapper, ILeaveAllocationRepository leaveAllocationRepository, ILeaveTypeRepository leaveTypeRepository, IEmployeeService employeeService)
+        public CreateLeaveAllocationCommandHandler(
+            IMapper mapper,
+            IEmployeeService employeeService,
+            IUnitOfWork unitOfWork,
+            ILeaveAllocationRepository leaveAllocationRepository,
+            ILeaveTypeRepository leaveTypeRepository)
         {
             _mapper = mapper;
+            _employeeService = employeeService;
+            _unitOfWork = unitOfWork;
             _leaveAllocationRepository = leaveAllocationRepository;
             _leaveTypeRepository = leaveTypeRepository;
-            _employeeService = employeeService;
         }
 
         public async Task<BaseCommandResponse> Handle(CreateLeaveAllocationCommand request, CancellationToken cancellationToken)
         {
             var response = new BaseCommandResponse();
-
-            var createLeaveAllocationValidator = new CreateLeaveAllocationDtoValidator(_leaveTypeRepository);
+            var createLeaveAllocationValidator = new CreateLeaveAllocationDtoValidator(_leaveTypeRepository!);
             var validationResults = await createLeaveAllocationValidator.ValidateAsync(request.CreateLeaveAllocationDto);
             if (!validationResults.IsValid)
                 throw new ValidationException(validationResults);
 
-            var leaveType = await _leaveTypeRepository.Get(request.CreateLeaveAllocationDto.LeaveTypeId);
+            var leaveType = await _unitOfWork.Repository<LeaveType>()!.Get(request.CreateLeaveAllocationDto.LeaveTypeId);
             var employees = await _employeeService.GetEmployeesAsync();
             var period = DateTime.Now.Year;
             var allocations = new List<LeaveAllocation>();

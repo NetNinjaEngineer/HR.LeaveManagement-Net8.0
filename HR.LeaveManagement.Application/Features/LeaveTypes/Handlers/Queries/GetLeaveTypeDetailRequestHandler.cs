@@ -10,23 +10,22 @@ namespace HR.LeaveManagement.Application.Features.LeaveTypes.Handlers.Queries
 {
     public class GetLeaveTypeDetailRequestHandler : IRequestHandler<GetLeaveTypeDetailRequest, LeaveTypeDto>
     {
-        private readonly ILeaveTypeRepository _leaveTypeRepository;
         private readonly IMapper _mapper;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public GetLeaveTypeDetailRequestHandler(ILeaveTypeRepository leaveTypeRepository, IMapper mapper)
+        public GetLeaveTypeDetailRequestHandler(IMapper mapper, IUnitOfWork unitOfWork)
         {
-            _leaveTypeRepository = leaveTypeRepository;
             _mapper = mapper;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<LeaveTypeDto> Handle(GetLeaveTypeDetailRequest request, CancellationToken cancellationToken)
         {
-            LeaveType? leaveType = await _leaveTypeRepository.Get(request.Id);
+            LeaveType? leaveType = await _unitOfWork.Repository<LeaveType>()!.Get(request.Id);
 
-            if (leaveType == null)
-                throw new NotFoundException(nameof(LeaveTypeDto), request.Id);
-
-            return _mapper.Map<LeaveType, LeaveTypeDto>(leaveType);
+            return leaveType == null
+                ? throw new NotFoundException(nameof(LeaveTypeDto), request.Id)
+                : _mapper.Map<LeaveType, LeaveTypeDto>(leaveType);
         }
     }
 }

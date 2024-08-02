@@ -4,26 +4,19 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HR.LeaveManagement.Persistence.Repositories
 {
-    public class GenericRepository<T> : IGenericRepository<T> where T : BaseDomainEntity
+    public class GenericRepository<T>(HRLeaveManagementDbContext context) : IGenericRepository<T> where T : BaseDomainEntity
     {
-        private readonly HRLeaveManagementDbContext _context;
-
-        public GenericRepository(HRLeaveManagementDbContext context)
-        {
-            _context = context;
-        }
+        private readonly HRLeaveManagementDbContext _context = context;
 
         public async Task<T> Add(T entity)
         {
             await _context.AddAsync(entity);
-            await _context.SaveChangesAsync();
             return entity;
         }
 
         public async Task<T> Delete(T entity)
         {
             _context.Remove(entity);
-            await _context.SaveChangesAsync();
             return entity;
         }
 
@@ -47,8 +40,6 @@ namespace HR.LeaveManagement.Persistence.Repositories
         public async Task<T> Update(T entity)
         {
             _context.Update(entity);
-            _context.Entry(entity).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
             return entity;
         }
     }

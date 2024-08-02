@@ -1,0 +1,77 @@
+﻿@model HR.LeaveManagement.MVC.Models.EmployeeLeaveRequestViewVM
+
+@{
+    ViewData["Title"] = "MyLeave";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>MyLeaves</h1>
+
+<hr />
+<table id="tblData" class="table">
+    <thead>
+        <tr>
+            <th>
+                Employee Name
+            </th>
+            <th>
+                Start Date
+            </th>
+            <th>
+                End Date
+            </th>
+            <th>
+                Leave Type
+            </th>
+            <th>
+                Date Requested
+            </th>
+
+            <th>
+                Approval Status
+            </th>
+
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.LeaveRequests)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Employee.Firstname) @Html.DisplayFor(modelItem => item.Employee.Lastname)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.StartDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.EndDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.LeaveType.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DateRequested)
+                </td>
+                <td>
+                    @if (item.Cancelled)
+                    {
+                        <span class="badge rounded-pill text-bg-secondary">Cancelled</span>
+                    }
+                    else if (item.Approved == true)
+                    {
+                        <span class="badge rounded-pill text-bg-success">Approved</span>
+                    }
+                    else if (item.Approved == false)
+                    {
+                        <span class="badge rounded-pill text-bg-danger">Rejected</span>
+                    }
+                    else
+                    {
+                        <span class="badge rounded-pill text-bg-warning">Pending Approval</span>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

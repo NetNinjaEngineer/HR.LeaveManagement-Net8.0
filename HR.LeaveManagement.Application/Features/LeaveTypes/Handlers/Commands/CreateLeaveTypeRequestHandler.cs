@@ -12,12 +12,12 @@ namespace HR.LeaveManagement.Application.Features.LeaveTypes.Handlers.Commands
     public class CreateLeaveTypeRequestHandler : IRequestHandler<CreateLeaveTypeCommand, CreateCommandResponse>
     {
         private readonly IMapper _mapper;
-        private readonly ILeaveTypeRepository _leaveTypeRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public CreateLeaveTypeRequestHandler(ILeaveTypeRepository leaveTypeRepository, IMapper mapper)
+        public CreateLeaveTypeRequestHandler(IMapper mapper, IUnitOfWork unitOfWork)
         {
-            _leaveTypeRepository = leaveTypeRepository;
             _mapper = mapper;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<CreateCommandResponse> Handle(CreateLeaveTypeCommand request, CancellationToken cancellationToken)
@@ -25,7 +25,7 @@ namespace HR.LeaveManagement.Application.Features.LeaveTypes.Handlers.Commands
             var createCommandResponse = new CreateCommandResponse();
             var validator = new CreateLeaveTypeDtoValidator();
 
-            var validationResult = await validator.ValidateAsync(request.CreateLeaveTypeDto);
+            var validationResult = await validator.ValidateAsync(request.CreateLeaveTypeDto, cancellationToken);
 
             if (!validationResult.IsValid)
             {
@@ -37,7 +37,8 @@ namespace HR.LeaveManagement.Application.Features.LeaveTypes.Handlers.Commands
 
             var mappedLeaveType = _mapper.Map<CreateLeaveTypeDto, LeaveType>(request.CreateLeaveTypeDto);
 
-            mappedLeaveType = await _leaveTypeRepository.Add(mappedLeaveType);
+            mappedLeaveType = await _unitOfWork.Repository<LeaveType>()!.Add(mappedLeaveType);
+            await _unitOfWork.SaveAsync();
 
             createCommandResponse.Message = $"Created Successfully with id ({mappedLeaveType.Id})";
             createCommandResponse.Id = mappedLeaveType.Id;
