@@ -8,8 +8,18 @@ public sealed class UnitOfWork : IUnitOfWork
 {
     private readonly HRLeaveManagementDbContext _context;
     private Hashtable _repositories = [];
+    private ILeaveAllocationRepository _leaveAllocationRepository;
+    private ILeaveTypeRepository _leaveTypeRepository;
+    private ILeaveRequestRepository _leaveRequestRepository;
 
     public UnitOfWork(HRLeaveManagementDbContext context) => _context = context;
+
+    public ILeaveAllocationRepository LeaveAllocationRepository =>
+        _leaveAllocationRepository ??= new LeaveAllocationRepository(_context);
+    public ILeaveTypeRepository LeaveTypeRepository =>
+        _leaveTypeRepository ??= new LeaveTypeRepository(_context);
+    public ILeaveRequestRepository LeaveRequestRepository =>
+        _leaveRequestRepository ??= new LeaveRequestRepository(_context);
 
     public async ValueTask DisposeAsync()
         => await _context.DisposeAsync();

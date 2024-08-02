@@ -11,18 +11,16 @@ namespace HR.LeaveManagement.Application.Features.LeaveAllocations.Handlers.Comm
     {
         private readonly IMapper mapper;
         private readonly IUnitOfWork unitOfWork;
-        private readonly ILeaveTypeRepository leaveTypeRepository;
 
-        public UpdateLeaveAllocationCommandHandler(IMapper mapper, IUnitOfWork unitOfWork, ILeaveTypeRepository leaveTypeRepository)
+        public UpdateLeaveAllocationCommandHandler(IMapper mapper, IUnitOfWork unitOfWork)
         {
             this.mapper = mapper;
             this.unitOfWork = unitOfWork;
-            this.leaveTypeRepository = leaveTypeRepository;
         }
 
         public async Task<Unit> Handle(UpdateLeaveAllocationCommand request, CancellationToken cancellationToken)
         {
-            var updateLeaveAllocationValidator = new UpdateLeaveAllocationDtoValidator(leaveTypeRepository);
+            var updateLeaveAllocationValidator = new UpdateLeaveAllocationDtoValidator(unitOfWork.LeaveTypeRepository);
             var validationResults = await updateLeaveAllocationValidator.ValidateAsync(request.UpdateLeaveAllocationDto);
             if (!validationResults.IsValid)
                 throw new Exception();

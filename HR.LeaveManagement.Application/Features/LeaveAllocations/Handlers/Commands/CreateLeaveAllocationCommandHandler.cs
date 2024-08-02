@@ -15,27 +15,21 @@ namespace HR.LeaveManagement.Application.Features.LeaveAllocations.Handlers.Comm
         private readonly IMapper _mapper;
         private readonly IEmployeeService _employeeService;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly ILeaveAllocationRepository _leaveAllocationRepository;
-        private readonly ILeaveTypeRepository _leaveTypeRepository;
 
         public CreateLeaveAllocationCommandHandler(
             IMapper mapper,
             IEmployeeService employeeService,
-            IUnitOfWork unitOfWork,
-            ILeaveAllocationRepository leaveAllocationRepository,
-            ILeaveTypeRepository leaveTypeRepository)
+            IUnitOfWork unitOfWork)
         {
             _mapper = mapper;
             _employeeService = employeeService;
             _unitOfWork = unitOfWork;
-            _leaveAllocationRepository = leaveAllocationRepository;
-            _leaveTypeRepository = leaveTypeRepository;
         }
 
         public async Task<BaseCommandResponse> Handle(CreateLeaveAllocationCommand request, CancellationToken cancellationToken)
         {
             var response = new BaseCommandResponse();
-            var createLeaveAllocationValidator = new CreateLeaveAllocationDtoValidator(_leaveTypeRepository!);
+            var createLeaveAllocationValidator = new CreateLeaveAllocationDtoValidator(_unitOfWork.LeaveTypeRepository);
             var validationResults = await createLeaveAllocationValidator.ValidateAsync(request.CreateLeaveAllocationDto);
             if (!validationResults.IsValid)
                 throw new ValidationException(validationResults);
@@ -47,7 +41,7 @@ namespace HR.LeaveManagement.Application.Features.LeaveAllocations.Handlers.Comm
 
             foreach (var employee in employees)
             {
-                if (await _leaveAllocationRepository.AllocationsExists(employee.EmployeeId, leaveType.Id, period))
+                if (await _unitOfWork.LeaveAllocationRepository.AllocationsExists(employee.EmployeeId, leaveType.Id, period))
                     continue;
 
                 allocations.Add(new LeaveAllocation
@@ -60,7 +54,7 @@ namespace HR.LeaveManagement.Application.Features.LeaveAllocations.Handlers.Comm
 
             }
 
-            await _leaveAllocationRepository.AddAllocations(allocations);
+            await _unitOfWork.LeaveAllocationRepository.AddAllocations(allocations);
             response.Succeeded = true;
             response.Message = "Allocations Successful";
 
